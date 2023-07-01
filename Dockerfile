@@ -4,7 +4,7 @@ FROM python:3.9-buster
 WORKDIR /app
 
 # Copy source code to working directory
-COPY . vlcrealestate.py /app/
+COPY . app.py /app/
 
 # Install packages from requirements.txt
 # hadolint ignore=DL3013
@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir --upgrade pip &&\
 EXPOSE 80
 
 # Run app.py at container launch
-CMD ["python", "vlcrealestate.py"]
+CMD ["python", "app.py"]
