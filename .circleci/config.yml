@@ -2,7 +2,7 @@ version: 2.1
 
 jobs:
  
-  build:
+  test:
     docker:
       # Use the same Docker base as the project
       - image: python:3.9-buster
@@ -69,13 +69,41 @@ jobs:
             # Push image to a docker repository
             docker push $DOCKER_PATH:latest
             
+  deploy-eks-cluster:
+    docker:
+      - image: circleci/python:3.9
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install AWS CLI and eksctl
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y awscli
+            sudo curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | sudo tar xz -C /usr/local/bin
+            sudo mv /usr/local/bin/eksctl /usr/local/bin/eksctl-$(eksctl version | awk '{print $3}')
+
+      - run:
+          name: Create EKS Cluster
+          command: |
+            eksctl create cluster \
+              --name $EKS_CLUSTER_NAME \
+              --region $AWS_DEFAULT_REGION \
+              --node-type t3.medium \
+              --nodes 2 \
+              --managed
+
+  
 workflows:
   default: 
 
     jobs:
-      - build
+      - test
       - docker-upload:
-          requires: [build]
+          requires: [test]
+      - deploy-eks-cluster:
+          requires: [docker-upload]
       
 
 
