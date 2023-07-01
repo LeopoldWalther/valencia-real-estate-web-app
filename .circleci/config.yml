@@ -43,12 +43,17 @@ jobs:
 
 
   docker-upload:
+    
     docker:
-      - image: python:3.9-buster
+      - image: cimg/go:1.17
+
     steps:
       - checkout
+
       - setup_remote_docker:
-          version: 19.03.13
+          version: 20.10.14
+          docker_layer_caching: true
+
       - run:
           name: Build Docker image
           command: |
