@@ -38,13 +38,39 @@ jobs:
           name: run lint
           command: |
             . venv/bin/activate
-            make lint 
+            make lint
 
+
+
+  docker-upload:
+    docker:
+      - image: python:3.9-buster
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+      - run:
+          name: Build Docker image
+          command: |
+            DOCKER_PATH=leopoldwalther/valencia-real-estate-report
+            echo "Docker ID and Image: $DOCKER_PATH"
+
+            docker build --tag=valencia-real-estate-report .
+
+            # Authenticate & tag
+            docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
+            docker tag valencia-real-estate-report $DOCKER_PATH:latest
+
+            # Push image to a docker repository
+            docker push $DOCKER_PATH:latest
+            
 workflows:
   default: 
 
     jobs:
       - build
+      - docker-upload:
+          requires: [build]
       
 
 
