@@ -1,5 +1,22 @@
 version: 2.1
 
+commands:
+  destroy-environment:
+    description: Destroy cloudformation stacks given a workflow ID.
+    parameters:
+      Workflow_ID:
+        type: string
+        default: ${CIRCLE_WORKFLOW_ID:0:7}  
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+            echo "Destroying environment: << parameters.Workflow_ID >> "
+            aws cloudformation delete-stack \
+              --stack-name "${ENVIRONMENT_NAME}-network"
+
+
 jobs:
  
   test:
@@ -40,10 +57,7 @@ jobs:
             . venv/bin/activate
             make lint
 
-
-
-  docker-upload:
-    
+  build:
     docker:
       - image: cimg/go:1.17
 
@@ -68,45 +82,37 @@ jobs:
 
             # Push image to a docker repository
             docker push $DOCKER_PATH:latest
-            
-  deploy-eks-cluster:
+
+  deploy-infrastructure:
     docker:
-      - image: circleci/python:3.9
+      - image: amazon/aws-cli
 
     steps:
       - checkout
 
       - run:
-          name: Install AWS CLI and eksctl
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y awscli
-            sudo curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | sudo tar xz -C /usr/local/bin
-            sudo mv /usr/local/bin/eksctl /usr/local/bin/eksctl-$(eksctl version | awk '{print $3}')
+          name: Install dependencies
+          command: yum install -y tar gzip
 
       - run:
-          name: Create EKS Cluster
+          name: Ensure EKS network exists
           command: |
-            eksctl create cluster \
-              --name $EKS_CLUSTER_NAME \
-              --region $AWS_DEFAULT_REGION \
-              --node-type t3.medium \
-              --nodes 2 \
-              --managed
+            aws cloudformation deploy \
+              --stack-name "${ENVIRONMENT_NAME}-network" \
+              --template-file file://infrastructure/hawa-network.yml \
+              --parameter-overrides file://infrastructure/hawa-network-parameters.json \
+              --region=${AWS_DEFAULT_REGION}
+              --tags project=${ENVIRONMENT_NAME}  
 
-  
+
 workflows:
   default: 
 
     jobs:
       - test
-      - docker-upload:
+      - build:
           requires: [test]
-      - deploy-eks-cluster:
-          requires: [docker-upload]
+      - deploy-infrastructure:
+          requires: [build]
+
       
-
-
-
-
-
