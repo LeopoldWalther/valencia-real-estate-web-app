@@ -91,18 +91,18 @@ jobs:
       - checkout
 
       - run:
-          name: Install dependencies
-          command: yum install -y tar gzip
-
-      - run:
           name: Ensure EKS network exists
           command: |
+            TEMPLATE_FILE="infrastructure/hawa-network.yml"
+            PARAMETER_FILE="file://infrastructure/hawa-network-parameters.json"
+
             aws cloudformation deploy \
-              --stack-name "${ENVIRONMENT_NAME}-network" \
-              --template-file file://infrastructure/hawa-network.yml \
-              --parameter-overrides file://infrastructure/hawa-network-parameters.json \
-              --region=${AWS_DEFAULT_REGION}
-              --tags project=${ENVIRONMENT_NAME}  
+              --stack-name ${ENVIRONMENT_NAME}-network \
+              --template-file $TEMPLATE_FILE \
+              --parameter-overrides $PARAMETER_FILE \
+              --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
+              --region $AWS_DEFAULT_REGION \
+              --tags project=${ENVIRONMENT_NAME}-project 
 
 
 workflows:
