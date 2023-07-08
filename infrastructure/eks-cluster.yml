@@ -1,0 +1,80 @@
+Description: >
+    Leopold Walther:
+    This template deploys ...
+
+
+Parameters:
+
+    EnvironmentName:
+      Description: Environment name that will be prefixed to resource names
+      Type: String
+    
+    KeyPairName:
+      Description: Keypair for Linux bastion host
+      Type: AWS::EC2::KeyPair::KeyName
+      Default: vlc-real-estate-app
+
+
+Resources:
+
+  ClusterSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow Jump Host to SSH to WebServers
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPCID"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+
+  EksRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: 
+        !Sub ${EnvironmentName}-Role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - eks.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSClusterPolicy
+        - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
+        - arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess
+
+  ClusterIamProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: 
+        !Sub ${EnvironmentName}-Profile
+      Path: "/"
+      Roles:
+        - !Ref EKSClusterRole
+
+  VlcRealEstateCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Version: "1.19"
+      Name: !Sub ${EnvironmentName}-Cluster
+      RoleArn: 
+        !GetAtt EksRole.Arn
+      ResourcesVpcConfig:
+        SecurityGroupIds:
+          - !Ref ClusterSecurityGroup
+        SubnetIds:
+          Fn::Split:
+            - ","
+            - Fn::ImportValue:
+                Fn::Sub: ${EnvironmentName}-PUB-NETS
+
+                
+Outputs:

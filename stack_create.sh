@@ -1,7 +1,7 @@
 ENVIRONMENT_NAME="vlc"
 STACK_NAME="network"
-TEMPLATE_FILE="infrastructure/hawa-network.yml"
-PARAMETER_FILE="file://infrastructure/hawa-network-parameters.json"
+TEMPLATE_FILE="infrastructure/vlc-network.yml"
+PARAMETER_FILE="file://infrastructure/vlc-network-parameters.json"
 DEFAULT_REGION="us-east-1"
 
 aws cloudformation deploy \

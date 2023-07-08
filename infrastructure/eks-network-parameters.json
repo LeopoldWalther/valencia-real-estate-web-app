@@ -1,7 +1,7 @@
 [
 	{
 		"ParameterKey": "EnvironmentName",
-		"ParameterValue": "HighAvailabilityWebApp"
+		"ParameterValue": "ValenciaRealEstate"
 	},
 	{
 		"ParameterKey": "VpcCIDR",

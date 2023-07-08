@@ -1,0 +1,246 @@
+Description: >
+    Leopold Walther:
+    This template deploys a Web Application where requests are distributed by a Application Load Balancer to a target group of EC2 Servers in an Auto-Scaling Group.
+
+
+Parameters:
+
+    EnvironmentName:
+      Description: An environment name that will be prefixed to resource names
+      Type: String
+
+    S3BucketName:
+      Description: The unique identifier of the bucket containing the data to serve the Web App
+      Type: String
+
+    KeyPairName:
+      Description: Keypair for Linux bastion host
+      Type: AWS::EC2::KeyPair::KeyName
+      Default: HighAvailabilityAppWebServers
+
+
+Resources:
+
+  S3ReadOnlyEC2Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: 
+        !Sub ${EnvironmentName}-Role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - ec2.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Path: "/"
+
+  S3ReadOnlyEC2Policies:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: AmazonS3ReadOnlyAccess
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Action: 
+          - s3:Get*
+          - s3:List*
+          Resource: 
+          - arn:aws:s3:::hawa-629476245943-bucket
+          - arn:aws:s3:::hawa-629476245943-bucket/*
+      Roles:
+      -  Ref: S3ReadOnlyEC2Role
+
+  WebAppIamProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+      - Ref: S3ReadOnlyEC2Role
+
+  LoadBalancerSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow http to our load balancer
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPCID"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+
+  WebServerSecGroup:
+    Type: AWS::EC2::SecurityGroup 
+    Properties:
+      GroupDescription: Allow http to our hosts and SSH from local only
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPCID"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        CidrIp: 0.0.0.0/0
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 0
+        ToPort: 65535
+        CidrIp: 0.0.0.0/0
+
+  JumpHostSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow Jump Host to SSH to WebServers
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPCID"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+
+  WebAppLaunchConfig:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          apt-get update -y
+          apt-get install unzip awscli -y
+          apt-get install apache2 -y
+          systemctl start apache2.service
+          cd /var/www/html
+          aws s3 cp s3://hawa-629476245943-bucket/website.zip .
+          unzip -o website.zip
+
+      ImageId: ami-0263e4deb427da90e
+      # KeyName: !Ref 'KeyPairName'
+      IamInstanceProfile: !Ref WebAppIamProfile
+      SecurityGroups:
+      - Ref: WebServerSecGroup
+      InstanceType: t3.small
+      BlockDeviceMappings:
+      - DeviceName: "/dev/sdk"
+        Ebs:
+          VolumeSize: '10'
+
+  WebAppGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      VPCZoneIdentifier:
+      - Fn::ImportValue: 
+          !Sub "${EnvironmentName}-PRIV-NETS"
+      LaunchConfigurationName:
+        Ref: WebAppLaunchConfig
+      MinSize: '2'
+      MaxSize: '4'
+      TargetGroupARNs:
+      - Ref: WebAppTargetGroup
+
+  WebAppLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internet-facing
+      Type: application
+      IpAddressType: ipv4
+      Subnets:
+      - Fn::ImportValue: !Sub "${EnvironmentName}-PUB1-SN"
+      - Fn::ImportValue: !Sub "${EnvironmentName}-PUB2-SN"
+      SecurityGroups:
+      - Ref: LoadBalancerSecGroup
+
+  Listener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+      - Type: forward
+        TargetGroupArn:
+          Ref: WebAppTargetGroup
+      LoadBalancerArn:
+        Ref: WebAppLoadBalancer
+      Port: '80'
+      Protocol: HTTP
+
+  AppLoadBalancerListenerRule:
+      Type: AWS::ElasticLoadBalancingV2::ListenerRule
+      Properties:
+        Actions:
+        - Type: forward
+          TargetGroupArn: !Ref 'WebAppTargetGroup'
+        Conditions:
+        - Field: path-pattern
+          Values: [/]
+        ListenerArn: !Ref 'Listener'
+        Priority: 1
+        
+  WebAppTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 8
+      HealthyThresholdCount: 2
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 5
+      VpcId: 
+        Fn::ImportValue:
+          Fn::Sub: "${EnvironmentName}-VPCID"
+
+  JumpHost:
+    Type: AWS::EC2::Instance
+    DependsOn:
+    - JumpHostSecGroup
+    Properties:
+      KeyName: !Ref 'KeyPairName'
+      ImageId: ami-02396cdd13e9a1257
+      InstanceType: t2.micro
+      NetworkInterfaces:
+      - AssociatePublicIpAddress: true
+        DeleteOnTermination: true
+        Description: ENI for bastion host
+        DeviceIndex: '0'
+        GroupSet: 
+          - Ref: "JumpHostSecGroup"
+        SubnetId:
+          Fn::ImportValue:
+            Fn::Sub: "${EnvironmentName}-PUB1-SN"
+      Tags:
+      - Key: Name
+        Value: !Sub ${EnvironmentName} Jump Host
+  
+
+Outputs: 
+
+  LoadBalancerURL:
+    Description: The DNSName or public URL of the load balancer
+    Value: !Join [ "", [ 'http://', !GetAtt WebAppLoadBalancer.DNSName ]]
+    Export:
+        Name: !Sub ${EnvironmentName}-LoadBalancer-DNSName
+
+  JumpHostPublicIp:
+    Description: Jump Host Public IP
+    Value: !GetAtt JumpHost.PublicIp
+    Export:
+      Name: !Sub "${EnvironmentName}-JumpHostPublicIp"
