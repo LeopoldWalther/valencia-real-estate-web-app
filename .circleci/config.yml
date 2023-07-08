@@ -83,7 +83,7 @@ jobs:
             # Push image to a docker repository
             docker push $DOCKER_PATH:latest
 
-  deploy-infrastructure:
+  deploy-network:
     docker:
       - image: amazon/aws-cli
 
@@ -104,8 +104,16 @@ jobs:
               --region $AWS_DEFAULT_REGION \
               --tags project=${ENVIRONMENT_NAME}-project 
 
+
+  deploy-cluster:
+    docker:
+      - image: amazon/aws-cli
+
+    steps:
+      - checkout
       - run:
           name: Deploy EKS cluster
+          no_output_timeout: 30m
           command: |
             TEMPLATE_FILE="infrastructure/eks-cluster.yml"
             PARAMETER_FILE="file://infrastructure/eks-cluster-parameters.json"
@@ -126,7 +134,9 @@ workflows:
       - test
       - build:
           requires: [test]
-      - deploy-infrastructure:
+      - deploy-network:
           requires: [build]
+      - deploy-cluster:
+          requires: [deploy-network]
 
       
