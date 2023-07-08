@@ -29,9 +29,8 @@ Resources:
         FromPort: 80
         ToPort: 80
         CidrIp: 0.0.0.0/0
-      SecurityGroupEgress:
 
-  EksRole:
+  ClusterIamRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: 
@@ -58,15 +57,15 @@ Resources:
         !Sub ${EnvironmentName}-Profile
       Path: "/"
       Roles:
-        - !Ref EKSClusterRole
+        - !Ref ClusterIamRole
 
   VlcRealEstateCluster:
     Type: AWS::EKS::Cluster
     Properties:
-      Version: "1.19"
+      Version: "1.27"
       Name: !Sub ${EnvironmentName}-Cluster
       RoleArn: 
-        !GetAtt EksRole.Arn
+        !GetAtt ClusterIamRole.Arn
       ResourcesVpcConfig:
         SecurityGroupIds:
           - !Ref ClusterSecurityGroup
@@ -75,6 +74,3 @@ Resources:
             - ","
             - Fn::ImportValue:
                 Fn::Sub: ${EnvironmentName}-PUB-NETS
-
-                
-Outputs:
