@@ -1,7 +1,7 @@
 ENVIRONMENT_NAME="vlc-real-estate-app"
-STACK_NAME="cluster"
-TEMPLATE_FILE="infrastructure/eks-cluster.yml"
-PARAMETER_FILE="file://infrastructure/eks-cluster-parameters.json"
+STACK_NAME="vlc-real-estate-app-nodes"
+TEMPLATE_FILE="infrastructure/eks-nodes.yml"
+PARAMETER_FILE="file://infrastructure/eks-nodes-parameters.json"
 DEFAULT_REGION="us-east-1"
 
 aws cloudformation deploy \

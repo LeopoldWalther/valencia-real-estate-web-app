@@ -67,7 +67,7 @@ Resources:
       ScalingConfig:
         MinSize: !Ref MinSize
         MaxSize: !Ref MaxSize
-        TargetSize: !Ref DesiredSize
+        DesiredSize: !Ref DesiredSize
       RemoteAccess:
         Ec2SshKey: !Ref EKSKeyPair
 
@@ -75,7 +75,7 @@ Resources:
 Outputs:
 
   EKSWorkerNodeRole:
-    Description: - IAM role for workers with permissions for kubelet running on the worker nodes
+    Description: IAM role for workers with permissions for kubelet running on the worker nodes
     Value: !GetAtt EKSWorkerNodeRole.Arn
     Export:
       Name: !Sub ${EnvironmentName}-EKSWorkerNodeRole
