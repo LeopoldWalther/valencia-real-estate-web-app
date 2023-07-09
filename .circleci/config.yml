@@ -93,13 +93,10 @@ jobs:
       - run:
           name: Deploy EKS network
           command: |
-            TEMPLATE_FILE="infrastructure/eks-network.yml"
-            PARAMETER_FILE="file://infrastructure/eks-network-parameters.json"
-
             aws cloudformation deploy \
               --stack-name ${ENVIRONMENT_NAME}-network \
-              --template-file $TEMPLATE_FILE \
-              --parameter-overrides $PARAMETER_FILE \
+              --template-file infrastructure/eks-network.yml \
+              --parameter-overrides file://infrastructure/eks-network-parameters.json \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
               --region $AWS_DEFAULT_REGION \
               --tags project=${ENVIRONMENT_NAME}-project 
@@ -115,13 +112,28 @@ jobs:
           name: Deploy EKS cluster
           no_output_timeout: 30m
           command: |
-            TEMPLATE_FILE="infrastructure/eks-cluster.yml"
-            PARAMETER_FILE="file://infrastructure/eks-cluster-parameters.json"
-
             aws cloudformation deploy \
               --stack-name ${ENVIRONMENT_NAME}-cluster \
-              --template-file $TEMPLATE_FILE \
-              --parameter-overrides $PARAMETER_FILE \
+              --template-file infrastructure/eks-cluster.yml \
+              --parameter-overrides file://infrastructure/eks-cluster-parameters.json \
+              --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
+              --region $AWS_DEFAULT_REGION \
+              --tags project=${ENVIRONMENT_NAME}-project 
+
+  deploy-nodes:
+    docker:
+      - image: amazon/aws-cli
+
+    steps:
+      - checkout
+      - run:
+          name: Deploy EKS nodes
+          no_output_timeout: 30m
+          command: |
+            aws cloudformation deploy \
+              --stack-name ${ENVIRONMENT_NAME}-nodes \
+              --template-file infrastructure/eks-nodes.yml \
+              --parameter-overrides file://infrastructure/eks-nodes-parameters.json \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
               --region $AWS_DEFAULT_REGION \
               --tags project=${ENVIRONMENT_NAME}-project 
@@ -138,5 +150,7 @@ workflows:
           requires: [build]
       - deploy-cluster:
           requires: [deploy-network]
+      - deploy-nodes:
+          requires: [deploy-cluster]
 
       

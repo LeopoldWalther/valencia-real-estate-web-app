@@ -8,16 +8,11 @@ Parameters:
     EnvironmentName:
       Description: Environment name that will be prefixed to resource names
       Type: String
-    
-    KeyPairName:
-      Description: Keypair for Linux bastion host
-      Type: AWS::EC2::KeyPair::KeyName
-      Default: vlc-real-estate-app
 
 
 Resources:
 
-  ClusterSecurityGroup:
+  EKSClusterSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow Jump Host to SSH to WebServers
@@ -30,11 +25,11 @@ Resources:
         ToPort: 80
         CidrIp: 0.0.0.0/0
 
-  ClusterIamRole:
+  EKSClusterRole:
     Type: AWS::IAM::Role
     Properties:
       RoleName: 
-        !Sub ${EnvironmentName}-Role
+        !Sub ${EnvironmentName}-EKSClusterRole
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -50,27 +45,46 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonEKSServicePolicy
         - arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess
 
-  ClusterIamProfile:
+  EKSClusterProfile:
     Type: AWS::IAM::InstanceProfile
     Properties:
       InstanceProfileName: 
-        !Sub ${EnvironmentName}-Profile
+        !Sub ${EnvironmentName}-ClusterProfile
       Path: "/"
       Roles:
-        - !Ref ClusterIamRole
+        - !Ref EKSClusterRole
 
-  VlcRealEstateCluster:
+  EKSCluster:
     Type: AWS::EKS::Cluster
     Properties:
       Version: "1.27"
       Name: !Sub ${EnvironmentName}-Cluster
       RoleArn: 
-        !GetAtt ClusterIamRole.Arn
+        !GetAtt EKSClusterRole.Arn
       ResourcesVpcConfig:
         SecurityGroupIds:
-          - !Ref ClusterSecurityGroup
+          - !Ref EKSClusterSecurityGroup
         SubnetIds:
           Fn::Split:
             - ","
             - Fn::ImportValue:
                 Fn::Sub: ${EnvironmentName}-PUB-NETS
+
+
+Outputs:
+
+  EKSClusterId:
+    Description: EKS Cluster ID
+    Value: 
+      !Ref EKSCluster
+    Export:
+      Name: 
+        !Sub ${EnvironmentName}-EKSClusterId
+
+  EKSClusterRoleArn:
+    Description: Role for accessing and creating aws resources
+    Value: 
+      !GetAtt EKSClusterRole.Arn
+    Export:
+      Name: 
+        !Sub ${EnvironmentName}-EKSClusterRoleArn

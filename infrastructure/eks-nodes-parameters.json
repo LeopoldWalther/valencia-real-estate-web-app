@@ -1,0 +1,16 @@
+
+
+[
+	{
+		"ParameterKey": "EnvironmentName",
+		"ParameterValue": "ValenciaRealEstate"
+	},
+
+	{
+        "ParameterKey" : "EKSKeyPair",
+        "ParameterValue" : "vlc-real-estate-app"
+    }
+]
+
+
+

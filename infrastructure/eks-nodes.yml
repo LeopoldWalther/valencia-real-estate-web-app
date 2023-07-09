@@ -1,0 +1,87 @@
+Description: >
+    Leopold Walther:
+    This template deploys ...
+
+
+Parameters:
+
+    EnvironmentName:
+      Description: Environment name that will be prefixed to resource names
+      Type: String
+    
+    EKSKeyPair:
+      Description: Keypair for EC2 instance
+      Type: AWS::EC2::KeyPair::KeyName
+      Default: vlc-real-estate-app
+
+    MinSize:
+      Description: Min amount of web servers
+      Type: Number
+      Default: 2
+
+    MaxSize:
+      Description: Max amount of web servers
+      Type: Number
+      Default: 4
+
+    DesiredSize:
+      Description: Desired amount of web servers
+      Type: Number
+      Default: 2
+
+
+Resources:
+
+  EKSWorkerNodeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${EnvironmentName}-EKSWorkerNodeRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy
+        - arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Path: /
+
+
+  EKSNodeGroup:
+    Type: AWS::EKS::Nodegroup
+    Properties:
+      ClusterName: !Sub ${EnvironmentName}-Cluster
+      NodegroupName: !Sub ${EnvironmentName}-Nodegroup
+      NodeRole: !GetAtt EKSWorkerNodeRole.Arn
+      InstanceTypes:
+        - t3.micro
+      AmiType: AL2_x86_64
+      Subnets:
+        Fn::Split:
+          - ","
+          - Fn::ImportValue:
+              Fn::Sub: ${EnvironmentName}-PUB-NETS
+      ScalingConfig:
+        MinSize: !Ref MinSize
+        MaxSize: !Ref MaxSize
+        TargetSize: !Ref DesiredSize
+      RemoteAccess:
+        Ec2SshKey: !Ref EKSKeyPair
+
+
+Outputs:
+
+  EKSWorkerNodeRole:
+    Description: - IAM role for workers with permissions for kubelet running on the worker nodes
+    Value: !GetAtt EKSWorkerNodeRole.Arn
+    Export:
+      Name: !Sub ${EnvironmentName}-EKSWorkerNodeRole
+
+  EKSNodeGroup:
+    Description: The node group for EKS
+    Value: !Ref EKSNodeGroup
+    Export:
+      Name: !Sub ${EnvironmentName}-EKSNodeGroup
