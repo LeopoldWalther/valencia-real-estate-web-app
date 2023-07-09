@@ -71,6 +71,47 @@ Resources:
       RemoteAccess:
         Ec2SshKey: !Ref EKSKeyPair
 
+  JumpHostSecGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub ${EnvironmentName}-JumpHostSecGroup
+      GroupDescription: Allow Jump Host to SSH to WebServers
+      VpcId:
+        Fn::ImportValue:
+          !Sub "${EnvironmentName}-VPCID"
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 0.0.0.0/0
+
+  JumpHost:
+    Type: AWS::EC2::Instance
+    DependsOn:
+    - JumpHostSecGroup
+    Properties:
+      KeyName: !Ref EKSKeyPair
+      ImageId: ami-02396cdd13e9a1257
+      InstanceType: t2.micro
+      NetworkInterfaces:
+      - AssociatePublicIpAddress: true
+        DeleteOnTermination: true
+        Description: ENI for jump host
+        DeviceIndex: '0'
+        GroupSet: 
+          - Ref: JumpHostSecGroup
+        SubnetId:
+          Fn::ImportValue:
+            Fn::Sub: "${EnvironmentName}-PUB1-SN"
+      Tags:
+      - Key: Name
+        Value: !Sub ${EnvironmentName} Jump Host
+  
 
 Outputs:
 
@@ -85,3 +126,9 @@ Outputs:
     Value: !Ref EKSNodeGroup
     Export:
       Name: !Sub ${EnvironmentName}-EKSNodeGroup
+
+  JumpHostPublicIp:
+    Description: Jump Host Public IP
+    Value: !GetAtt JumpHost.PublicIp
+    Export:
+      Name: !Sub "${EnvironmentName}-JumpHostPublicIp"
