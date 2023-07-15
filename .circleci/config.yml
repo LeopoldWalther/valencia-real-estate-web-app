@@ -39,7 +39,6 @@ commands:
             aws cloudformation delete-stack \
               --stack-name "${ENVIRONMENT_NAME}-network"
 
-
 jobs:
  
   test:
@@ -174,7 +173,7 @@ jobs:
             - inventory.txt
             - status.txt
 
-      - destroy-environment
+      #- destroy-environment
 
 
 workflows:
