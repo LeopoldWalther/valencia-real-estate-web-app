@@ -1,5 +1,17 @@
 version: 2.1
 
+executors:
+  node:
+    docker:
+      - image: circleci/node:13.8.0 
+  python:
+    docker:
+      - image: python:3.7-alpine3.11 
+  aws:
+    docker:
+      - image: amazon/aws-cli:latest
+
+
 commands:
   destroy-environment:
     description: Destroy cloudformation stacks given a workflow ID.
@@ -20,10 +32,7 @@ commands:
 jobs:
  
   test:
-    docker:
-      # Use the same Docker base as the project
-      - image: python:3.9-buster
-
+    executor: python
     working_directory: ~/repo
 
     steps:
@@ -60,7 +69,6 @@ jobs:
   build:
     docker:
       - image: cimg/go:1.17
-
     steps:
       - checkout
 
@@ -84,9 +92,7 @@ jobs:
             docker push $DOCKER_PATH:latest
 
   deploy-network:
-    docker:
-      - image: amazon/aws-cli
-
+    executor: aws
     steps:
       - checkout
 
@@ -103,9 +109,7 @@ jobs:
 
 
   deploy-cluster:
-    docker:
-      - image: amazon/aws-cli
-
+    executor: aws
     steps:
       - checkout
       - run:
@@ -121,14 +125,11 @@ jobs:
               --tags project=${ENVIRONMENT_NAME}-project 
 
   deploy-nodes:
-    docker:
-      - image: amazon/aws-cli
-
+    executor: aws
     steps:
       - checkout
       - run:
           name: Deploy EKS nodes
-          no_output_timeout: 30m
           command: |
             aws cloudformation deploy \
               --stack-name ${ENVIRONMENT_NAME}-nodes \
@@ -137,6 +138,28 @@ jobs:
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
               --region $AWS_DEFAULT_REGION \
               --tags project=${ENVIRONMENT_NAME}-project 
+              --output text >> ~/status.txt
+
+            cat ~/status.txt
+
+      - run:
+          name: Get  IPs for Ansible
+          command: |
+            echo [web] > ~/inventory.txt
+
+            aws ec2 describe-instances \
+              --region "${AWS_DEFAULT_REGION}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-JumpHost" \
+              --output text >> ~/inventory.txt
+
+            cat ~/inventory.txt
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - ./.circleci/inventory.txt
+            - ./.circleci/status.txt
 
 
 workflows:
