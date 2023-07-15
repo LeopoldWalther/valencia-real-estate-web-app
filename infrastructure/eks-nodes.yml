@@ -110,7 +110,7 @@ Resources:
             Fn::Sub: "${EnvironmentName}-PUB1-SN"
       Tags:
       - Key: Name
-        Value: !Sub ${EnvironmentName} Jump Host
+        Value: !Sub ${EnvironmentName}-JumpHost
   
 
 Outputs:
