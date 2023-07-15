@@ -149,7 +149,7 @@ jobs:
               --parameter-overrides file://infrastructure/eks-nodes-parameters.json \
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
               --region $AWS_DEFAULT_REGION \
-              --tags project=${ENVIRONMENT_NAME}-project 
+              --tags project=${ENVIRONMENT_NAME}-project \
               --output text >> ~/status.txt
 
             cat ~/status.txt
