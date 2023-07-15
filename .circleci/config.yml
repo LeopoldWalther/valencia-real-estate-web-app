@@ -160,10 +160,9 @@ jobs:
             echo [web] > ~/inventory.txt
 
             aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-JumpHost" \
+              --filters "Name=tag:Name,Values${ENVIRONMENT_NAME} Jump Host" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text >> ~/inventory.txt
-
 
             cat ~/inventory.txt
 
