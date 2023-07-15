@@ -171,8 +171,8 @@ jobs:
       - persist_to_workspace:
           root: ~/
           paths:
-            - ~/inventory.txt
-            - ~/status.txt
+            - inventory.txt
+            - status.txt
 
       - destroy-environment
 
