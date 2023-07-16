@@ -1,0 +1,57 @@
+---
+
+- name: "Install dependencies"
+  hosts: jumphost
+  user: ubuntu
+  become: true
+  become_method: sudo
+  become_user: root  
+  gather_facts: false
+
+  vars:
+    - ansible_python_interpreter: /usr/bin/python3
+    - ansible_host_key_checking: false
+    - ansible_stdout_callback: yaml
+
+  pre_tasks:
+    - name: "Install 'unzip'"
+      apt:
+        name: [ "unzip" ]
+        state: latest
+        update_cache: yes
+
+- name: "Download AWS CLI"
+  shell: curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  args:
+    chdir: $HOME
+
+- name: "Unzip AWS CLI"
+  shell: unzip awscliv2.zip
+  args:
+    chdir: $HOME
+
+- name: "Install AWS CLI"
+  shell: ./aws/install
+  args:
+    chdir: $HOME
+
+- name: "Download kubectl"
+  shell: curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl
+  args:
+    chdir: $HOME
+
+- name: "Change permissions"
+  shell: chmod +x ./kubectl
+  args:
+    chdir: $HOME
+
+- name: "Copy binary to $PATH"
+  shell: mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+  args:
+    chdir: $HOME
+
+- name: "Add $HOME/bin path to the shell init"
+  shell: echo 'export PATH=$PATH:$HOME/bin' >> .bashrc
+  args:
+    chdir: $HOME
+  

@@ -177,7 +177,33 @@ jobs:
             - inventory.txt
             - status.txt
 
-      #- destroy-environment
+      - destroy-environment
+
+  configure-jumphost:
+    executor: python-buster
+    steps:
+
+      - checkout
+
+      - add_ssh_keys:
+          fingerprints:
+            - "68:87:81:c5:b1:43:99:09:6b:c6:7f:cb:e9:41:a3:f0"
+
+      - attach_workspace:
+          at: ~/
+
+      - run:
+          name: Install ansible
+          command: |
+            apk add --update ansible
+
+      - run:
+          name: Configure Jump Host
+          command: | 
+            cat ~/inventory.txt
+            cd ansible
+            ansible-playbook -i ~/inventory.txt configure-jumphost.yml
+
 
 workflows:
   default: 
@@ -192,5 +218,8 @@ workflows:
           requires: [deploy-network]
       - deploy-nodes:
           requires: [deploy-cluster]
+      - configure-jumphost:
+          requires: [deploy-nodes]
+
 
       
