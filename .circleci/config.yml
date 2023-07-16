@@ -180,7 +180,7 @@ jobs:
       - destroy-environment
 
   configure-jumphost:
-    executor: python-buster
+    executor: python-alpine
     steps:
 
       - checkout
