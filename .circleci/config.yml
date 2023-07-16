@@ -138,6 +138,11 @@ jobs:
     executor: aws
     steps:
       - checkout
+
+      - run:
+          name: Install dependencies for persisting workspace
+          command: yum install -y tar gzip
+
       - run:
           name: Deploy EKS nodes
           command: |
