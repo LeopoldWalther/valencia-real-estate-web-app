@@ -203,7 +203,7 @@ jobs:
           name: Configure Jump Host
           command: | 
             cat ./ansible/inventory.txt
-
+            export ANSIBLE_HOST_KEY_CHECKING=false
             ansible-playbook -i ./ansible/inventory.txt ./ansible/configure-server.yml   
 
 workflows:
