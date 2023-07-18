@@ -9,7 +9,7 @@ executors:
       - image: python:3.9-buster
   python-alpine:
     docker:
-      - image: python:3.9-alpine
+      - image: python:3.11-rc-alpine
   aws:
     docker:
       - image: amazon/aws-cli:latest
