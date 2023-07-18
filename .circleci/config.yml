@@ -154,9 +154,9 @@ jobs:
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
               --region $AWS_DEFAULT_REGION \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --output text >> /ansible/server-status.txt
+              --output text >> ./ansible/server-status.txt
 
-            cat /ansible/status.txt
+            cat ./ansible/status.txt
 
       - run:
           name: Get  IPs for Ansible
@@ -166,9 +166,9 @@ jobs:
             aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-JumpHost" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text >> /ansible/inventory.txt
+              --output text >> ./ansible/inventory.txt
 
-            cat /ansible/inventory.txt
+            cat ./ansible/inventory.txt
 
       - persist_to_workspace:
           root: .
