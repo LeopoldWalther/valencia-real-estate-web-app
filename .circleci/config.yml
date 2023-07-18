@@ -146,7 +146,6 @@ jobs:
       - run:
           name: Deploy EKS nodes
           command: |
-            touch ~/status.txt
 
             aws cloudformation deploy \
               --stack-name ${ENVIRONMENT_NAME}-nodes \
@@ -155,9 +154,9 @@ jobs:
               --capabilities "CAPABILITY_IAM" "CAPABILITY_NAMED_IAM" \
               --region $AWS_DEFAULT_REGION \
               --tags project=${ENVIRONMENT_NAME}-project \
-              --output text >> ~/status.txt
+              --output text >> /ansible/server-status.txt
 
-            cat ~/status.txt
+            cat /ansible/status.txt
 
       - run:
           name: Get  IPs for Ansible
@@ -167,15 +166,16 @@ jobs:
             aws ec2 describe-instances \
               --filters "Name=tag:Name,Values=${ENVIRONMENT_NAME}-JumpHost" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --output text >> ~/inventory.txt
+              --output text >> /ansible/inventory.txt
 
-            cat ~/inventory.txt
+            cat /ansible/inventory.txt
 
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
-            - inventory.txt
-            - status.txt
+            - ./ansible/inventory.txt
+            - ./ansible/server-status.txt
+
 
       - destroy-environment
 
@@ -190,7 +190,7 @@ jobs:
             - "68:87:81:c5:b1:43:99:09:6b:c6:7f:cb:e9:41:a3:f0"
 
       - attach_workspace:
-          at: ~/
+          at: .
 
       - run:
           name: Install ansible
@@ -200,9 +200,10 @@ jobs:
       - run:
           name: Configure Jump Host
           command: | 
-            cat ~/inventory.txt
-            cd ansible
-            ansible-playbook -i ~/inventory.txt configure-jumphost.yml
+            cat ~/project/ansible/inventory.txt
+
+            ansible-playbook -i ~/project/ansible/inventory.txt ~/project/ansible/configure-server.yml   
+
 
 
 workflows:
