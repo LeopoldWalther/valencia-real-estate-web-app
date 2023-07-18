@@ -156,7 +156,7 @@ jobs:
               --tags project=${ENVIRONMENT_NAME}-project \
               --output text >> ./ansible/server-status.txt
 
-            cat ./ansible/status.txt
+            cat ./ansible/server-status.txt
 
       - run:
           name: Get  IPs for Ansible
