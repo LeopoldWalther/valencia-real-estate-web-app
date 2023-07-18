@@ -16,6 +16,7 @@ executors:
 
 
 commands:
+
   destroy-environment:
     description: Destroy cloudformation stacks given a workflow ID.
     parameters:
@@ -183,26 +184,27 @@ jobs:
 
       - checkout
 
-      - add_ssh_keys:
-          fingerprints:
-            - "68:87:81:c5:b1:43:99:09:6b:c6:7f:cb:e9:41:a3:f0"
-
       - attach_workspace:
           at: .
+
+      - add_ssh_keys:
+          fingerprints: ["68:87:81:c5:b1:43:99:09:6b:c6:7f:cb:e9:41:a3:f0"]
 
       - run:
           name: Install ansible
           command: |
+            apk add curl
+            apk add --upgrade bash
             apk add --update ansible
+            apk add openssh-client
+            pip3 install awscli
 
       - run:
           name: Configure Jump Host
           command: | 
-            cat ~/project/ansible/inventory.txt
+            cat ./ansible/inventory.txt
 
-            ansible-playbook -i ~/project/ansible/inventory.txt ~/project/ansible/configure-server.yml   
-
-
+            ansible-playbook -i ./ansible/inventory.txt ./ansible/configure-server.yml   
 
 workflows:
   default: 
