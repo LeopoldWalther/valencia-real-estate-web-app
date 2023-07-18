@@ -188,16 +188,13 @@ jobs:
           at: .
 
       - add_ssh_keys:
-          fingerprints: ["68:87:81:c5:b1:43:99:09:6b:c6:7f:cb:e9:41:a3:f0"]
+          fingerprints: ["be:f8:9f:b2:30:c9:5e:1e:5e:6a:80:99:19:9c:3e:dd"]
 
       - run:
           name: Install ansible
           command: |
-            apk add curl
-            apk add --upgrade bash
             apk add --update ansible
-            apk add openssh-client
-            pip3 install awscli
+
 
       - run:
           name: Configure Jump Host
