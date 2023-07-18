@@ -1,17 +1,12 @@
 [
 	{
 		"ParameterKey": "EnvironmentName",
-		"ParameterValue": "HighAvailabilityWebApp"
+		"ParameterValue": "vlc-real-estate-app"
 	},
 
 	{
-        "ParameterKey" : "S3BucketName",
-        "ParameterValue" : "hawa-629476245943-bucket"
-    },
-
-	{
         "ParameterKey" : "KeyPairName",
-        "ParameterValue" : "HighAvailabilityAppWebServers"
+        "ParameterValue" : "vlc-real-estate-app"
     }
 ]
 
