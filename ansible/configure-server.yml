@@ -1,58 +1,35 @@
 ---
 
-- name: "Install dependencies"
+- name: "configuration play." 
   hosts: web
   user: ubuntu
   become: true
   become_method: sudo
   become_user: root  
   gather_facts: false
-
+  
   vars:
     - ansible_python_interpreter: /usr/bin/python3
     - ansible_host_key_checking: false
     - ansible_stdout_callback: yaml
 
   pre_tasks:
-    - name: "Install 'unzip'"
+    - name: "wait 600 seconds for target connection to become reachable/usable."
+      wait_for_connection:
+        delay: 60
+        timeout: 600
+
+    - name: "install python for Ansible."
+      become: yes
       apt:
-        name: [ "unzip" ]
-        state: latest
+        name: "python3-pip"
         update_cache: yes
+        state: present
+
+  # Get the environment variables from CircleCI and add to the EC2 instance 
+  environment:
+    ENVIRONMENT_NAME: "{{ lookup('env','ENVIRONMENT') }}" 
 
   roles:
-    - install-dependencies
-
-
-- name: "AWS Login"
-  hosts: web
-  user: ubuntu
-  become: true
-  gather_facts: false
-
-  vars:
-    AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
-    AWS_ACCESS_KEY_ID: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
-    AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
-  
-  tasks:
-    - name: Set aws_access_key_id
-      shell: "aws configure set aws_access_key_id {{ AWS_ACCESS_KEY_ID }}"
-    - name: Set aws_secret_access_key
-      shell: "aws configure set aws_secret_access_key {{ AWS_SECRET_ACCESS_KEY }}"
-    - name: Set default region
-      shell: "aws configure set default.region {{ AWS_DEFAULT_REGION }}"
-
-- name: "Get kubectl config"
-  hosts: web
-  user: ubuntu
-  become: true
-  gather_facts: false
-
-  vars:
-    AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
-    ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
-
-  pre_tasks:
-    - name: "Create kubeconfig file"
-      shell: "aws eks update-kubeconfig --region {{ AWS_DEFAULT_REGION }} --name {{ ENVIRONMENT_NAME }}-cluster"
+    - configure-server
+    - configure-prometheus-node-exporter

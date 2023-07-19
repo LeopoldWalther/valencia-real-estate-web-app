@@ -1,0 +1,31 @@
+---
+
+  - name: Create directory for web
+    file: 
+      path: /home/ubuntu/web
+      state: directory
+
+  - name: Copy files
+    become: true
+    copy:
+      src: /root/project/backend.tar.gz
+      dest: /home/ubuntu
+
+  - name: Unarchive backend files
+    unarchive:
+      src: /home/ubuntu/backend.tar.gz
+      dest: /home/ubuntu/web
+      copy: no
+
+  - name: Start backend
+    become: true
+    shell: |
+      cd /home/ubuntu/web
+      npm install
+      #npm install reflect-metadata@0.1.12 ajv@^6.9.1 winston@2.x.x
+      #pm2 stop default
+      pm2 start npm -- start
+
+  - name: Wait for 60 seconds
+    pause:
+      seconds: 60
