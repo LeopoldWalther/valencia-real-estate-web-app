@@ -13,9 +13,9 @@
 
     - name: Install zip
       apt:
-        name: [ "unzip" ]
-        state: latest
-        update_cache: yes
+        name: zip
+        state: present
+
 
   roles:
     - configure-server

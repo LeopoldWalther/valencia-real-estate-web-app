@@ -4,12 +4,12 @@
     url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
     dest: "/tmp/awscli.zip"
 
-- name: "Unzip downloaded AWS CLI"
-  shell: unzip awscliv.zip
-  args:
-    chdir: $HOME
+- name: Unzip downloaded AWS CLI
+  unarchive:
+    src: "/tmp/awscli.zip"
+    dest: "/usr/local/awscli"
+    remote_src: yes
+    creates: "/usr/local/awscli/aws"
 
-- name: "Install AWS CLI"
-  shell: ./aws/install
-  args:
-    chdir: $HOME
+- name: Install AWS CLI
+  command: /usr/local/awscli/aws/install.sh
