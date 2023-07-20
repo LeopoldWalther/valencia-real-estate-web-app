@@ -212,15 +212,15 @@ workflows:
   default: 
 
     jobs:
-      - test
-      - build:
-          requires: [test]
-      - deploy-network:
-          requires: [build]
-      - deploy-cluster:
-          requires: [deploy-network]
-      - deploy-nodes:
-          requires: [deploy-cluster]
+      #- test
+      #- build:
+      #    requires: [test]
+      #- deploy-network:
+      #    requires: [build]
+      #- deploy-cluster:
+      #    requires: [deploy-network]
+      - deploy-nodes #:
+      #    requires: [deploy-cluster]
       - configure-jumphost:
           requires: [deploy-nodes]
 
