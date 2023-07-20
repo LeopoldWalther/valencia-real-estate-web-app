@@ -1,25 +1,18 @@
 ---
-
-- name: "configuration play." 
+- name: "Install dependencies"
   hosts: web
-  user:  ec2-user
+  user: ubuntu
   become: true
   become_method: sudo
   become_user: root  
   gather_facts: false
-  
-  vars:
-    - ansible_python_interpreter: /usr/bin/python3
-    - ansible_host_key_checking: false
-    - ansible_stdout_callback: yaml
 
   pre_tasks:
-    - name: "install python for Ansible."
-      become: yes
+    - name: "Install 'unzip'"
       apt:
-        name: "python3-pip"
+        name: [ "unzip" ]
+        state: latest
         update_cache: yes
-        state: present
 
   roles:
     - configure-server

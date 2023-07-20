@@ -96,7 +96,7 @@ Resources:
     - JumpHostSecGroup
     Properties:
       KeyName: !Ref EKSKeyPair
-      ImageId: ami-02396cdd13e9a1257
+      ImageId: ami-053b0d53c279acc90
       InstanceType: t2.micro
       NetworkInterfaces:
       - AssociatePublicIpAddress: true
