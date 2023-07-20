@@ -1,19 +1,17 @@
 ---
-- name: "Install dependencies"
+- name: Install dependencies
   hosts: web
   user: ubuntu
   become: true
-  become_method: sudo
-  become_user: root  
   gather_facts: false
 
   pre_tasks:
-  
+
     - name: Update apt cache
       apt:
         update_cache: yes
 
-    - name: "Install 'unzip'"
+    - name: Install zip
       apt:
         name: [ "unzip" ]
         state: latest
