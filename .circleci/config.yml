@@ -10,6 +10,7 @@ executors:
   python-alpine:
     docker:
       - image: python:3.7-alpine3.11
+      #python:3.9-alpine
   aws:
     docker:
       - image: amazon/aws-cli:latest
@@ -193,11 +194,8 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add curl
-            apk add --upgrade bash
             apk add --update ansible
-            apk add openssh-client
-            pip3 install awscli
+
 
       - run:
           name: Configure Jump Host

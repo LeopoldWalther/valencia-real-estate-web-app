@@ -8,6 +8,11 @@
   gather_facts: false
 
   pre_tasks:
+  
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
     - name: "Install 'unzip'"
       apt:
         name: [ "unzip" ]
