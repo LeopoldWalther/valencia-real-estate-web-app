@@ -9,7 +9,7 @@ executors:
       - image: python:3.9-buster
   python-alpine:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: python:3.11-rc-alpine
   aws:
     docker:
       - image: amazon/aws-cli:latest
@@ -191,21 +191,16 @@ jobs:
           fingerprints: ["be:f8:9f:b2:30:c9:5e:1e:5e:6a:80:99:19:9c:3e:dd"]
 
       - run:
-          name: Install ansible
+          name: Install dependencies
           command: |
-            apk add curl
-            apk add --upgrade bash
             apk add --update ansible
-            apk add openssh-client
-            pip3 install awscli
-
 
 
       - run:
           name: Configure Jump Host
           command: | 
             cat ./ansible/inventory.txt
-            export ANSIBLE_HOST_KEY_CHECKING=false
+            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ./ansible/inventory.txt ./ansible/configure-server.yml   
 
 workflows:
