@@ -7,9 +7,13 @@
 - name: Unzip downloaded AWS CLI
   unarchive:
     src: "/tmp/awscli.zip"
-    dest: "/home/ubuntu/awscli"
+    dest: "./awscli"
     remote_src: yes
-    creates: "/home/ubuntu/awscli/aws"
+    creates: "./awscli/aws"
+    args:
+      chdir: $HOME
 
 - name: Install AWS CLI
-  command: /home/ubuntu/awscli/aws/install.sh
+  command: ./awscli/aws/install
+  args:
+    chdir: $HOME
