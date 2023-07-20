@@ -7,10 +7,36 @@
 - name: Unzip downloaded AWS CLI
   unarchive:
     src: "/tmp/awscli.zip"
-    dest: "~/"
+    dest: "$HOME/"
     remote_src: yes
 
 - name: Install the AWS CLI
   shell: ./aws/install
+  args:
+    chdir: $HOME
+
+- name: Download kubectl
+  get_url:
+    url: "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl"
+    dest: "/tmp/kubectl"
+
+- name: Apply execute permissions to binary
+  shell: chmod +x ./kubectl
+  args:
+    chdir: $HOME
+
+- name: Create a new folder
+  file:
+    path: $HOME/bin
+    state: directory
+    mode: "0755"  # Set desired permissions for the folder (optional)
+
+  - name: Copy a file to the new folder
+  copy:
+    src: /tmp/kubectl
+    dest: $HOME/bin/kubectl
+
+- name: Add path to bashrc
+  shell: export PATH=$PATH:$HOME/bin && echo 'export PATH=$PATH:$HOME/bin' >> .bashrc
   args:
     chdir: $HOME
