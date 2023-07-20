@@ -7,9 +7,7 @@
 - name: Unzip downloaded AWS CLI
   unarchive:
     src: "/tmp/awscli.zip"
-    dest: "./awscli"
-    remote_src: yes
-    creates: "./awscli/aws"
+    dest: "./"
     args:
       chdir: $HOME
 
