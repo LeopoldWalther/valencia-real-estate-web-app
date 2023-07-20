@@ -8,6 +8,7 @@
   unarchive:
     src: "/tmp/awscli.zip"
     dest: "./"
+    remote_src: yes
     args:
       chdir: $HOME
 
