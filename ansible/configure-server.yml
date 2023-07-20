@@ -2,7 +2,7 @@
 
 - name: "configuration play." 
   hosts: web
-  user: ubuntu
+  user:  ec2-user
   become: true
   become_method: sudo
   become_user: root  
@@ -20,10 +20,6 @@
         name: "python3-pip"
         update_cache: yes
         state: present
-
-  # Get the environment variables from CircleCI and add to the EC2 instance 
-  environment:
-    ENVIRONMENT_NAME: "{{ lookup('env','ENVIRONMENT') }}" 
 
   roles:
     - configure-server
