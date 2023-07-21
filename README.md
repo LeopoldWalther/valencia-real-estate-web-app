@@ -74,9 +74,14 @@ The combination of center and distance leads to the following area of real estat
 * Add [lambda function as IAC](https://learn.udacity.com/nanodegrees/nd9991/parts/cd0650/lessons/ls11589/concepts/9d600341-9343-4c00-ab95-bcea69059812)
 * Automatically update data in flask app with S3
 * Add [Smoke Test](https://learn.udacity.com/nanodegrees/nd9991/parts/cd0649/lessons/fde8c9b6-6f0e-4943-961c-91ae0ba432b5/concepts/c818a36c-1110-4c1a-93c7-b84c8daf1f88)
-* Add [prometheus monitoring](https://learn.udacity.com/nanodegrees/nd9991/parts/cd0649/lessons/8055dc75-2edb-44e6-8f74-76fb86d17a9b/concepts/379682d3-2621-4f1e-be3a-c3c7023b684f)
+* Add [prometheus monitoring](https://learn.udacity.com/nanodegrees/nd9991/parts/cd0649/lessons/8055dc75-2edb-44e6-8f74-76fb86d17a9b/concepts/379682d3-2621-4f1e-be3a-c3c7023b684f) 
+  * Grafana Dashboards
   * Add [alerts](https://learn.udacity.com/nanodegrees/nd9991/parts/cd0650/lessons/ls11592/concepts/458c67b2-19ca-4978-b62e-2d0cd070d6b1)
   * load testing
+* ML model to predict future values/ value for a certain set of parameters
+  * update model weekly with new values
+* use Cloudfront
+* change from CloudFormation to Terraform
 
 ## Run Project <a name="installation"></a>
 
