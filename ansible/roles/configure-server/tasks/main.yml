@@ -20,7 +20,7 @@
     url: "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl"
     dest: "/tmp/kubectl"
 
-- name: Change file permissions and add execute permission
+- name: Add execute permission to kubectl file
   file:
     path: /tmp/kubectl
     mode: "0755"
@@ -31,7 +31,7 @@
     state: directory
     mode: "0755"
 
-- name: Copy a file to the new folder
+- name: Copy a file to home folder
   copy:
     src: /tmp/kubectl
     dest: $HOME/bin/kubectl
