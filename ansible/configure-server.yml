@@ -6,11 +6,9 @@
   gather_facts: false
 
   pre_tasks:
-
     - name: Update apt cache
       apt:
         update_cache: yes
-
     - name: Install zip
       apt:
         name: zip
@@ -19,7 +17,7 @@
   roles:
     - configure-server
 
-- name: Login to AWS
+- name: Download kubeconfig
   hosts: web
   user: ubuntu
   become: true
@@ -29,8 +27,7 @@
     AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
     AWS_ACCESS_KEY_ID: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
     AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
-    ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
-   
+    ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}
 
   pre_tasks:
     - name: Set AWS_DEFAULT_REGION
