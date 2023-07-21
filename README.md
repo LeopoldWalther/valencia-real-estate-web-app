@@ -35,7 +35,8 @@ A lambda function which is triggered once a week retrieves sale and rent prices 
 This project creates a Flask web app using the idealista real estate data. A CircleCI Continuous Integration pipeline tests the app and builds a Docker image from it. Furthermore it creates the infrastructure necessary to host the web app.
 The following image shows the architecture of the aws infrastructure deployed via AWS CloudFormation.
 
-[<img alt="alt_text" width="40px" src="images/image.PNG" />](https://lucid.app/documents/view/9275a822-f1fb-41a3-920b-2e30894cadf1)
+![AWS Architecture created by IAC](./img/vlc-real-estate-web-app.svg)
+<img src="./img/vlc-real-estate-web-app.svg">
 
 
 
