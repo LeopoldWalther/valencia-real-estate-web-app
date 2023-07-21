@@ -57,6 +57,8 @@ The following filter are applied when requesting the idealista API:
 The combination of center and distance leads to the following area of real estate listings:
 
 ![search radius on map](./img/SearchRadius.png)
+<img src="./img/SearchRadius.png">
+
 
 
 ### Steps to be done:
