@@ -1,37 +1,36 @@
 ---
 
-# - name: Download AWS CLI
-#   get_url:
-#     url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
-#     dest: "/tmp/awscli.zip"
+- name: Download AWS CLI
+  get_url:
+    url: "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip"
+    dest: "/tmp/awscli.zip"
 
-# - name: Unzip downloaded AWS CLI
-#   unarchive:
-#     src: "/tmp/awscli.zip"
-#     dest: "$HOME/"
-#     remote_src: yes
+- name: Unzip downloaded AWS CLI
+  unarchive:
+    src: "/tmp/awscli.zip"
+    dest: "$HOME/"
+    remote_src: yes
 
-# - name: Install the AWS CLI
-#   shell: ./aws/install
-#   args:
-#     chdir: $HOME
+- name: Install the AWS CLI
+  shell: ./aws/install
+  args:
+    chdir: $HOME
 
-# - name: Download kubectl
-#   get_url:
-#     url: "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl"
-#     dest: "/tmp/kubectl"
+- name: Download kubectl
+  get_url:
+    url: "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl"
+    dest: "/tmp/kubectl"
 
-# - name: Add execute permission to kubectl file
-#   file:
-#     path: /tmp/kubectl
-#     mode: "0755"
+- name: Add execute permission to kubectl file
+  file:
+    path: /tmp/kubectl
+    mode: "0755"
 
-# - name: Create a new folder
-#   file:
-#     path: $HOME/bin
-#     state: directory
-#     mode: "0755"
-
+- name: Create a new folder
+  file:
+    path: $HOME/bin
+    state: directory
+    mode: "0755"
 
 - name: Copy a file to home folder
   copy:
