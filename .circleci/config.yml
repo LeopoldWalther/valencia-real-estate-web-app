@@ -217,13 +217,46 @@ jobs:
               
               fi
 
-            
-            
+  deploy-app:
+    executor: python-alpine
+    steps:
 
+      - checkout
 
-            
-            
+      - attach_workspace:
+          at: .
 
+      - add_ssh_keys:
+          fingerprints: ["be:f8:9f:b2:30:c9:5e:1e:5e:6a:80:99:19:9c:3e:dd"]
+
+      - run:
+          name: Install dependencies
+          command: |
+            apk add curl
+            apk add --upgrade bash
+            apk add --update ansible
+            apk add openssh-client
+            pip3 install awscli
+
+      - run:
+          name: Deploy app to cluster
+          command: |
+
+            cat ./ansible/inventory.txt
+
+            if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
+
+              then
+                echo "Jump Host will be configured."
+                export ANSIBLE_HOST_KEY_CHECKING=False
+                ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml   
+                
+              else
+                echo "Jump Host already configured."
+              
+              fi
+
+        
 workflows:
   default: 
 
@@ -239,6 +272,8 @@ workflows:
       #    requires: [deploy-cluster]
       - configure-jumphost:
           requires: [deploy-nodes]
+      - deploy-app:
+          requires: [configure-jumphost]
 
 
       

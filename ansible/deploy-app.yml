@@ -1,0 +1,7 @@
+---
+- name: Install dependencies
+  hosts: web
+  user: ubuntu
+  become: true
+  gather_facts: false
+
