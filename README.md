@@ -38,7 +38,6 @@ This project creates a Flask web app using the idealista real estate data. A Cir
 The following image shows the architecture of the aws infrastructure deployed via AWS CloudFormation.
 
 ![AWS Architecture created by IAC](./img/vlc-real-estate-web-app.svg)
-<img src="./img/vlc-real-estate-web-app.svg">
 
 As the Idealista API only allows 100 Requests per month with each request containing a maximum of 50 listings, it was necessary to reduce the data requested with filters and the download frequency to once a week.
 The code to request data from the Idealista API is run via an AWS Lamba function once per week and downloads the results as JSON files to an AWS S3 bucket.
@@ -57,7 +56,7 @@ The following filter are applied when requesting the idealista API:
 
 The combination of center and distance leads to the following area of real estate listings:
 
-![alt text](images/SearchRadius.png)
+![search radius on map](./img/SearchRadius.png)
 
 
 ### Steps to be done:
@@ -103,7 +102,7 @@ The Dockerfile uses Python 3.9.
 * Prerequesits:
   * Docker locally [installed](https://learn.udacity.com/nanodegrees/nd9991/parts/cd0650/lessons/ls11590/concepts/508d0c2d-ac5e-4efc-b42c-07d0dda7eaaf)
 * There are two options to build and run the docker image
-  * Either you just run `././run_docker.sh`
+  * Either you just run `./run_docker.sh`
   * Or you run the docker commands yourself:
     * Build docker image `docker build --tag=valencia-real-estate-report .`
     * The image should apper in the list of your local docker images `docker image ls`
@@ -113,7 +112,7 @@ The Dockerfile uses Python 3.9.
 ### Run Flask App On AWS Cluster
 * Prerequesits:
   * aws_access_key_id & aws_secret_access_key for a user with programmatic access to AWS
-  * a rsa key pair on aws 'named vlc-real-estate-app'
+  * a rsa key pair on aws named 'vlc-real-estate-app'
 
 
 ## Results<a name="results"></a>
