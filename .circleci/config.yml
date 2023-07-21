@@ -200,13 +200,29 @@ jobs:
             apk add openssh-client
             pip3 install awscli
 
-
       - run:
           name: Configure Jump Host
           command: | 
             cat ./ansible/inventory.txt
-            export ANSIBLE_HOST_KEY_CHECKING=False
-            ansible-playbook -i ./ansible/inventory.txt ./ansible/configure-server.yml   
+
+            if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
+
+              then
+                echo "Jump Host will be configured."
+                export ANSIBLE_HOST_KEY_CHECKING=False
+                ansible-playbook -i ./ansible/inventory.txt ./ansible/configure-server.yml   
+                
+              else
+                echo "Jump Host already configured."
+              
+              fi
+
+            
+            
+
+
+            
+            
 
 workflows:
   default: 
