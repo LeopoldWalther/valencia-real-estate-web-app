@@ -9,6 +9,8 @@ Goal of this project is to visualize current key indicators about the valencian 
   - [Project Motivation](#project-motivation)
   - [Project Architecture](#project-architecture)
     - [Steps to be done:](#steps-to-be-done)
+      - [must:](#must)
+      - [optional:](#optional)
   - [Run Project ](#run-project-)
     - [Run Flask App Locally With Python Env](#run-flask-app-locally-with-python-env)
     - [Run Flask App Locally With Docker Image](#run-flask-app-locally-with-docker-image)
@@ -38,9 +40,33 @@ The following image shows the architecture of the aws infrastructure deployed vi
 ![AWS Architecture created by IAC](./img/vlc-real-estate-web-app.svg)
 <img src="./img/vlc-real-estate-web-app.svg">
 
+As the Idealista API only allows 100 Requests per month with each request containing a maximum of 50 listings, it was necessary to reduce the data requested with filters and the download frequency to once a week.
+The code to request data from the Idealista API is run via an AWS Lamba function once per week and downloads the results as JSON files to an AWS S3 bucket.
+
+The following filter are applied when requesting the idealista API:
+
+'property_type' : 'homes',
+'center' : '39.4693441,-0.379561',
+'distance' : '1500',
+'minSize' : '100',
+'maxSize' : '160',
+'elevator' : 'True',
+'preservation' : 'good',
+'order' : 'distance',
+'sort' : 'asc',
+
+The combination of center and distance leads to the following area of real estate listings:
+
+![alt text](images/SearchRadius.png)
 
 
 ### Steps to be done:
+
+#### must:
+* add circle ci job to deploy docker image on cluster
+* 
+
+#### optional:
 * Add Load balancer 
 * Move cluster into private subnets
 * Add circle ci badge
