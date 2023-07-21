@@ -20,16 +20,16 @@
     url: "https://amazon-eks.s3.us-west-2.amazonaws.com/1.19.6/2021-01-05/bin/linux/amd64/kubectl"
     dest: "/tmp/kubectl"
 
-- name: Apply execute permissions to binary
-  shell: chmod +x ./kubectl
-  args:
-    chdir: $HOME
+- name: Change file permissions and add execute permission
+  file:
+    path: /tmp/file
+    mode: "0755"
 
 - name: Create a new folder
   file:
     path: $HOME/bin
     state: directory
-    mode: "0755"  # Set desired permissions for the folder (optional)
+    mode: "0755"
 
 - name: Copy a file to the new folder
   copy:
