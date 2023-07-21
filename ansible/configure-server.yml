@@ -32,7 +32,7 @@
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
    
 
-  pre_tasks::
+  pre_tasks:
     - name: Set AWS_DEFAULT_REGION
       shell: "aws configure set default.region {{ AWS_DEFAULT_REGION }}"
     - name: Set AWS_ACCESS_KEY_ID
