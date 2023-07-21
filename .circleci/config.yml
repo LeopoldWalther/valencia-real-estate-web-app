@@ -176,7 +176,6 @@ jobs:
             - ./ansible/inventory.txt
             - ./ansible/server-status.txt
 
-
       #- destroy-environment
 
   configure-jumphost:
@@ -217,6 +216,8 @@ jobs:
               
               fi
 
+      #- destroy-environment
+
   deploy-app:
     executor: python-alpine
     steps:
@@ -255,7 +256,8 @@ jobs:
                 echo "Jump Host already configured."
               
               fi
-
+              
+      #- destroy-environment
         
 workflows:
   default: 
@@ -264,16 +266,17 @@ workflows:
       #- test
       #- build:
       #    requires: [test]
-      #- deploy-network:
+      - deploy-network #:
       #    requires: [build]
-      #- deploy-cluster:
-      #    requires: [deploy-network]
-      - deploy-nodes #:
-      #    requires: [deploy-cluster]
+      - deploy-cluster:
+          requires: [deploy-network]
+      - deploy-nodes:
+          requires: [deploy-cluster]
       - configure-jumphost:
           requires: [deploy-nodes]
       - deploy-app:
           requires: [configure-jumphost]
+      #- clean-up 
 
 
       
