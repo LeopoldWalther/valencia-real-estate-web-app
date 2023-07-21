@@ -22,7 +22,7 @@
 
 - name: Change file permissions and add execute permission
   file:
-    path: /tmp/file
+    path: /tmp/kubectl
     mode: "0755"
 
 - name: Create a new folder
