@@ -215,12 +215,12 @@ workflows:
       #- test
       #- build:
       #    requires: [test]
-      #- deploy-network:
+      - deploy-network #:
       #    requires: [build]
-      #- deploy-cluster:
-      #    requires: [deploy-network]
-      - deploy-nodes #:
-      #    requires: [deploy-cluster]
+      - deploy-cluster:
+          requires: [deploy-network]
+      - deploy-nodes:
+          requires: [deploy-cluster]
       - configure-jumphost:
           requires: [deploy-nodes]
 
