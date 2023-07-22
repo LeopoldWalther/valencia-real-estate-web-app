@@ -325,6 +325,8 @@ workflows:
           requires: [deploy-cluster]
       - configure-jumphost:
           requires: [deploy-nodes]
+      - deploy-load-balancer:
+          requires: [deploy-load-balancer]
       - deploy-app:
           requires: [build-image, configure-jumphost]
       #- clean-up 
