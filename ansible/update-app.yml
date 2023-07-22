@@ -1,0 +1,27 @@
+---
+
+- name: Update App
+  hosts: web
+  user: ubuntu
+  become: true
+  gather_facts: false
+
+  vars:
+    AWS_DEFAULT_REGION: "{{ lookup('env', 'AWS_DEFAULT_REGION') }}"
+    AWS_ACCESS_KEY_ID: "{{ lookup('env','AWS_ACCESS_KEY_ID') }}"
+    AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
+    ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
+
+  pre_tasks:
+
+    - name: Set AWS_DEFAULT_REGION
+      shell: "aws configure set default.region {{ AWS_DEFAULT_REGION }}"
+
+    - name: Set AWS_ACCESS_KEY_ID
+      shell: "aws configure set aws_access_key_id {{ AWS_ACCESS_KEY_ID }}"
+
+    - name: Set the AWS_SECRET_ACCESS_KEY
+      shell: "aws configure set aws_secret_access_key {{ AWS_SECRET_ACCESS_KEY }}"
+
+  roles:
+    - kubectl-update

@@ -242,9 +242,22 @@ jobs:
       - run:
           name: Update app image of cluster
           command: |
-
+            cat ./ansible/inventory.txt
             export ANSIBLE_HOST_KEY_CHECKING=False
-            ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml   
+
+            if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
+
+              then
+                echo "App will be deployed to Cluster"
+                ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml  
+                
+              else
+                echo "App will be updated on Cluster"
+                ansible-playbook -i ./ansible/inventory.txt ./ansible/update-app.yml  
+              
+              fi
+
+               
                 
 
       #- destroy-environment
