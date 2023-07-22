@@ -258,6 +258,7 @@ jobs:
           name: Save Elastic Load Balancer DNS
           command: |
 
+            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ./ansible/inventory.txt ./ansible/get-load-balancer-dns.yml
             cat ./ansible/dns.txt
 

@@ -57,7 +57,6 @@ The following filter are applied when requesting the idealista API:
 The combination of center and distance leads to the following area of real estate listings:
 
 ![search radius on map](./img/SearchRadius.png)
-<img src="./img/SearchRadius.png">
 
 
 
@@ -114,7 +113,7 @@ The Dockerfile uses Python 3.9.
 * Prerequesits:
   * aws_access_key_id & aws_secret_access_key for a user with programmatic access to AWS
   * A rsa key pair on aws named 'vlc-real-estate-app'
-  * Define CircleCI fingerprint
+  * Define additional CircleCI SSH key fingerprint with rsa key pair 'vlc-real-estate-app'
   * Define CircleCI environment variables:
     * AWS_ACCESS_KEY_ID = ...
     * AWS_DEFAULT_REGION = us-east-1
@@ -124,10 +123,30 @@ The Dockerfile uses Python 3.9.
     * DOCKER_USERNAME = ...
     * EKS_CLUSTER_NAME = vlc-real-estate-app
     * ENVIRONMENT_NAME = vlc-real-estate-app
-   Trigger CircleCI pipeline
+* Trigger CircleCI pipeline
 
 
 ## Results<a name="results"></a>
+
+The resulting CircleCI workflow consists of the following jobs:
+
+![Circle CI workflow](./img/circleci-pipeline.png)
+
+It creates at least three EC instances, at least two worker nodes and one jump host:
+
+![EC2 instances](./img/EC2Instances.png)
+
+Once the kubernetes cluster and nodes are up and running and the application is deployed, you can get the load balancer dns with the following commands:
+
+![Kubernetes Cluster](./img/kubectl-services.png)
+
+Finally, it is possible to access the app via the dns using http and port 80:
+
+![App up and running](./img/aws-eks-hosted-web-app.png)
+
+
+
+
 
 
 
