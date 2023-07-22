@@ -6,8 +6,11 @@
 - name: Get nodes
   shell: "kubectl get nodes"
 
-- name: Deploy App
-  shell: "kubectl create deploy vlc-real-estate-app --image=leopoldwalther/valencia-real-estate-report:latest"
+#- name: Initial Deployment of App
+  #shell: "kubectl create deploy vlc-real-estate-app --image=leopoldwalther/valencia-real-estate-report:latest"
+
+- name: Update deployment with the latest image
+  shell: "kubectl set image deployment/vlc-real-estate-app vlc-real-estate-app=leopoldwalther/valencia-real-estate-report:latest"
 
 - name: Wait 60 seconds for pod to be deployed
   wait_for_connection:

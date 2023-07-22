@@ -240,22 +240,12 @@ jobs:
             pip3 install awscli
 
       - run:
-          name: Deploy app to cluster
+          name: Update app image of cluster
           command: |
 
-            #cat ./ansible/inventory.txt
-
-            #if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
-
-            #  then
-            #    echo "Jump Host will be configured."
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml   
                 
-            #  else
-            #    echo "Jump Host already configured."
-              
-            #  fi
 
       #- destroy-environment
         
@@ -263,11 +253,10 @@ workflows:
   default: 
 
     jobs:
-      #- test
-      #- build:
-      #    requires: [test]
-      - deploy-network #:
-      #    requires: [build]
+      - test
+      - build:
+          requires: [test]
+      - deploy-network:
       - deploy-cluster:
           requires: [deploy-network]
       - deploy-nodes:
