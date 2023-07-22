@@ -215,7 +215,7 @@ jobs:
               
               fi
 
-      #- destroy-environment
+      - destroy-environment
 
   deploy-load-balancer:
     executor: python-alpine
@@ -244,13 +244,13 @@ jobs:
             if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
 
               then
-                echo "..."
+                echo "Elastic Load Balancer Service by Kubernetes will be initialized"
                 export ANSIBLE_HOST_KEY_CHECKING=False
                 ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-load-balancer.yml   
                 sleep 60
                 
               else
-                echo "..."
+                echo "Elastic Load Balancer Service already active."
               
               fi
 
@@ -259,9 +259,6 @@ jobs:
           command: |
 
             ansible-playbook -i ./ansible/inventory.txt ./ansible/get-load-balancer-dns.yml
-            ls .
-            ls ~
-            ls ./ansible/
             cat ./ansible/dns.txt
 
       - persist_to_workspace:
@@ -291,7 +288,7 @@ jobs:
             pip3 install awscli
 
       - run:
-          name: Update app image of cluster
+          name: Deploy app image to cluster
           command: |
             cat ./ansible/inventory.txt
             export ANSIBLE_HOST_KEY_CHECKING=False
@@ -299,15 +296,42 @@ jobs:
             if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
 
               then
-                echo "App will be deployed to Cluster"
+                echo "App will be deployed to Cluster."
                 ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml  
                 
               else
-                echo "..." 
+                echo "App already deployed." 
               
               fi
           
-      #- destroy-environment
+      - destroy-environment
+
+
+  update-app-image:
+    executor: python-alpine
+    steps:
+
+      - checkout
+
+      - attach_workspace:
+          at: .
+
+      - add_ssh_keys:
+          fingerprints: ["be:f8:9f:b2:30:c9:5e:1e:5e:6a:80:99:19:9c:3e:dd"]
+
+      - run:
+          name: Install dependencies
+          command: |
+            apk add curl
+            apk add --upgrade bash
+            apk add --update ansible
+            apk add openssh-client
+            pip3 install awscli
+
+      - run:
+          name: Update docker image
+          command: |
+            ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml  
         
 workflows:
   default: 
@@ -327,4 +351,6 @@ workflows:
           requires: [configure-jumphost]
       - deploy-app:
           requires: [build-image, deploy-load-balancer]
+      - update-app-image:
+          requires: [deploy-app]
       #- clean-up 

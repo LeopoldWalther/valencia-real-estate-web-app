@@ -113,9 +113,18 @@ The Dockerfile uses Python 3.9.
 ### Run Flask App On AWS Cluster
 * Prerequesits:
   * aws_access_key_id & aws_secret_access_key for a user with programmatic access to AWS
-  * a rsa key pair on aws named 'vlc-real-estate-app'
+  * A rsa key pair on aws named 'vlc-real-estate-app'
   * Define CircleCI fingerprint
-  * Define CircleCI environment variables
+  * Define CircleCI environment variables:
+    * AWS_ACCESS_KEY_ID = ...
+    * AWS_DEFAULT_REGION = us-east-1
+    * AWS_SECRET_ACCESS_KEY = ...
+    * DOCKER_PASSWORD = ...
+    * DOCKER_PATH = leopoldwalther/valencia-real-estate-report
+    * DOCKER_USERNAME = ...
+    * EKS_CLUSTER_NAME = vlc-real-estate-app
+    * ENVIRONMENT_NAME = vlc-real-estate-app
+   Trigger CircleCI pipeline
 
 
 ## Results<a name="results"></a>
