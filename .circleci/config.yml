@@ -256,7 +256,7 @@ workflows:
       - test
       - build:
           requires: [test]
-      - deploy-network:
+      - deploy-network
       - deploy-cluster:
           requires: [deploy-network]
       - deploy-nodes:
