@@ -114,6 +114,8 @@ The Dockerfile uses Python 3.9.
 * Prerequesits:
   * aws_access_key_id & aws_secret_access_key for a user with programmatic access to AWS
   * a rsa key pair on aws named 'vlc-real-estate-app'
+  * Define CircleCI fingerprint
+  * Define CircleCI environment variables
 
 
 ## Results<a name="results"></a>

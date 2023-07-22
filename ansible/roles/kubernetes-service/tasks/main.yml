@@ -1,0 +1,21 @@
+---
+
+- name: Create kubeconfig for cluster
+  shell: |
+    aws eks update-kubeconfig --region {{ AWS_DEFAULT_REGION }} --name {{ ENVIRONMENT_NAME }}-Cluster
+
+- name: Get nodes
+  shell: |
+    kubectl get nodes
+
+- name: Copy kubernetes service
+  become: true
+  copy:
+    src: kubernetes-service.yaml
+    dest: $HOME
+
+- name: Apply kubernetes service
+  shell: |
+    kubectl apply -f kubernetes-service.yaml
+  args:
+    chdir: $HOME

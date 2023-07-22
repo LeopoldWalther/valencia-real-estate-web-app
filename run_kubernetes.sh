@@ -4,14 +4,14 @@
 
 # This is your Docker ID/path
 # dockerpath=<>
-dockerpath=leopoldwalther/housing-price-prediction
+dockerpath=leopoldwalther/valencia-real-estate-report
 
 # Run the Docker Hub container with kubernetes
-kubectl create deploy housing-price-prediction --image=$dockerpath:latest
+kubectl create deploy valencia-real-estate-report --image=$dockerpath:latest
 
 # List kubernetes pods
 kubectl get pods
-podname=$(kubectl get pods | grep -o "housing-price-prediction-.*" | awk '{print $1}')
+podname=$(kubectl get pods | grep -o "valencia-real-estate-report-.*" | awk '{print $1}')
 
 # Forward the container port to a host
-kubectl port-forward pod/$podname 8000:80
+kubectl port-forward pod/$podname 80:80

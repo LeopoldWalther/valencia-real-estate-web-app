@@ -217,6 +217,60 @@ jobs:
 
       #- destroy-environment
 
+  deploy-load-balancer:
+    executor: python-alpine
+    steps:
+
+      - checkout
+
+      - attach_workspace:
+          at: .
+
+      - add_ssh_keys:
+          fingerprints: ["be:f8:9f:b2:30:c9:5e:1e:5e:6a:80:99:19:9c:3e:dd"]
+
+      - run:
+          name: Install dependencies
+          command: |
+            apk add curl
+            apk add --upgrade bash
+            apk add --update ansible
+            apk add openssh-client
+            pip3 install awscli
+            
+      - run:
+          name: Configure server
+          command: |
+            if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
+
+              then
+                echo "..."
+                export ANSIBLE_HOST_KEY_CHECKING=False
+                ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-load-balancer.yml   
+                sleep 60
+                
+              else
+                echo "..."
+              
+              fi
+
+      - run:
+          name: Save Elastic Load Balancer DNS
+          command: |
+
+            ansible-playbook -i ./ansible/inventory.txt ./ansible/get-load-balancer-dns.yml
+            cat ./dns.txt
+
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - dns.txt
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ./dns.txt
+
   deploy-app:
     executor: python-alpine
     steps:
@@ -251,8 +305,7 @@ jobs:
                 ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml  
                 
               else
-                echo "App will be updated on Cluster"
-                ansible-playbook -i ./ansible/inventory.txt ./ansible/update-app.yml  
+                echo "..." 
               
               fi
           

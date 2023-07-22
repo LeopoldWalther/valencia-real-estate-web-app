@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vlc-real-estate-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vlc-real-estate-app
+  template:
+    metadata:
+      labels:
+        app: vlc-real-estate-app
+    spec:
+      containers:
+        - name: vlc-real-estate-app-container
+          image: leopoldwalther/valencia-real-estate-report
+          ports:
+            - containerPort: 80

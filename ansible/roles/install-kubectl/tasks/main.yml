@@ -16,7 +16,6 @@
   args:
     chdir: $HOME
 
-
 - name: Add Kubernetes APT repository key
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
