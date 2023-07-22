@@ -43,7 +43,7 @@ commands:
 
 jobs:
  
-  test:
+  test-app:
     executor: python-buster
     working_directory: ~/repo
 
@@ -78,7 +78,7 @@ jobs:
             . venv/bin/activate
             make lint
 
-  build:
+  build-image:
     docker:
       - image: cimg/go:1.17
     steps:
@@ -253,9 +253,9 @@ workflows:
   default: 
 
     jobs:
-      - test
-      - build:
-          requires: [test]
+      - test-app
+      - build-image:
+          requires: [test-app]
       - deploy-network
       - deploy-cluster:
           requires: [deploy-network]
@@ -264,8 +264,5 @@ workflows:
       - configure-jumphost:
           requires: [deploy-nodes]
       - deploy-app:
-          requires: [build, configure-jumphost]
+          requires: [build-image, configure-jumphost]
       #- clean-up 
-
-
-      
