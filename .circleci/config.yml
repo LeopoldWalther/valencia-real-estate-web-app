@@ -243,20 +243,20 @@ jobs:
           name: Deploy app to cluster
           command: |
 
-            cat ./ansible/inventory.txt
+            #cat ./ansible/inventory.txt
 
-            if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
+            #if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
 
-              then
-                echo "Jump Host will be configured."
-                export ANSIBLE_HOST_KEY_CHECKING=False
-                ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml   
+            #  then
+            #    echo "Jump Host will be configured."
+            export ANSIBLE_HOST_KEY_CHECKING=False
+            ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml   
                 
-              else
-                echo "Jump Host already configured."
+            #  else
+            #    echo "Jump Host already configured."
               
-              fi
-              
+            #  fi
+
       #- destroy-environment
         
 workflows:

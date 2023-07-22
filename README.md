@@ -65,10 +65,9 @@ The combination of center and distance leads to the following area of real estat
 
 #### must:
 * add circle ci job to deploy docker image on cluster
-* 
+* Add Load balancer to be able to access pods
 
 #### optional:
-* Add Load balancer 
 * Move cluster into private subnets
 * Add circle ci badge
 * Add more visuals to flask web app

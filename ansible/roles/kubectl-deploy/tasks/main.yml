@@ -1,0 +1,21 @@
+---
+
+- name: Create kubeconfig for cluster
+  shell: "aws eks update-kubeconfig --region {{ AWS_DEFAULT_REGION }} --name {{ ENVIRONMENT_NAME }}-Cluster"
+
+- name: Get nodes
+  shell: "kubectl get nodes"
+
+- name: Deploy App
+  shell: "kubectl create deploy vlc-real-estate-app --image=leopoldwalther/valencia-real-estate-report:latest"
+
+- name: Wait 60 seconds for pod to be deployed
+  wait_for_connection:
+    delay: 60
+    timeout: 60
+
+- name: Get pod id
+  shell: "pod=$(kubectl get deploy,rs,svc,pods | grep -o \"pod/vlc-real-estate-app[^ ]*\")"
+  
+- name: Forward ports
+  shell: "kubectl port-forward $pod --address 0.0.0.0 8000:8000"
