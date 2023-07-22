@@ -17,4 +17,4 @@
   shell: "pod=$(kubectl get pods | grep -o 'vlc-real-estate-app[^ ]*')"
   
 - name: Forward ports
-  shell: "kubectl port-forward pod/$pod 80:80"
+  shell: "kubectl port-forward pod/{{ pod }} 80:80"
