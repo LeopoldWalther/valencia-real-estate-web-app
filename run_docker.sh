@@ -7,4 +7,4 @@ docker build --tag=valencia-real-estate-report .
 docker image ls
 
 # Run flask app
-docker run -p 8000:80 valencia-real-estate-report
+docker run -p 80:80 valencia-real-estate-report

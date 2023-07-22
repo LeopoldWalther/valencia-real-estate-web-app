@@ -6,18 +6,15 @@
 - name: Get nodes
   shell: "kubectl get nodes"
 
-#- name: Initial Deployment of App
-#  shell: "kubectl create deploy vlc-real-estate-app --image=leopoldwalther/valencia-real-estate-report:latest"
+- name: Initial Deployment of App
+  shell: "kubectl create deploy vlc-real-estate-app --image={{ DOCKER_PATH }}:latest"
 
-#- name: Wait 60 seconds for pod to be deployed
-#  wait_for_connection:
-#    delay: 60
-#    timeout: 60
+- name: Wait for 60 seconds for the pod to be deployed
+  pause:
+    seconds: 60
 
-#- name: Get pod id
-#  shell: "pod=$(kubectl get deploy,rs,svc,pods | grep -o \"pod/vlc-real-estate-app[^ ]*\")"
+- name: Get pod id
+  shell: "pod=$(kubectl get pods | grep -o 'vlc-real-estate-app[^ ]*')"
   
-#- name: Forward ports
-#  shell: "kubectl port-forward $pod --address 0.0.0.0 8000:8000"
-
-  # kubectl port-forward pod/python-helloworld-84857d9565-2598m --address 0.0.0.0 5000:5000
+- name: Forward ports
+  shell: "kubectl port-forward pod/$pod 80:80"

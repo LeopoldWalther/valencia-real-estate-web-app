@@ -91,7 +91,6 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            DOCKER_PATH=leopoldwalther/valencia-real-estate-report
             echo "Docker ID and Image: $DOCKER_PATH"
 
             docker build --tag=valencia-real-estate-report .
@@ -256,10 +255,7 @@ jobs:
                 ansible-playbook -i ./ansible/inventory.txt ./ansible/update-app.yml  
               
               fi
-
-               
-                
-
+          
       #- destroy-environment
         
 workflows:
