@@ -291,13 +291,11 @@ jobs:
       - run:
           name: Deploy app image to cluster
           command: |
-            cat ./ansible/inventory.txt
-            export ANSIBLE_HOST_KEY_CHECKING=False
-
             if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
 
               then
                 echo "App will be deployed to Cluster."
+                export ANSIBLE_HOST_KEY_CHECKING=False
                 ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml  
                 
               else
@@ -332,6 +330,7 @@ jobs:
       - run:
           name: Update docker image
           command: |
+            export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml  
         
 workflows:
