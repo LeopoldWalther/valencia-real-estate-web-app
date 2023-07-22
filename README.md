@@ -132,6 +132,12 @@ The resulting CircleCI workflow consists of the following jobs:
 
 ![Circle CI workflow](./img/circleci-pipeline.png)
 
+One of the jobs is to lint the python and docker files, this is what it looks like, if it fails/succeeds:
+
+![Linting failed](./img/lint-fail.png)
+
+![Linting succeeded](./img/lint-success.png)
+
 It creates at least three EC instances, at least two worker nodes and one jump host:
 
 ![EC2 instances](./img/EC2Instances.png)
