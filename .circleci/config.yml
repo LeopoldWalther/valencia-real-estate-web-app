@@ -264,7 +264,7 @@ workflows:
       - configure-jumphost:
           requires: [deploy-nodes]
       - deploy-app:
-          requires: [configure-jumphost]
+          requires: [build, configure-jumphost]
       #- clean-up 
 
 
