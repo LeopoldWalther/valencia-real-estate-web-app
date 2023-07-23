@@ -13,5 +13,5 @@
 - name: Copy the file to the local machine
   fetch:
     src: /home/ubuntu/elb-dns.txt
-    dest: ./ansible/elb-dns.txt
+    dest: /root/project/ansible/elb-dns.txt
     flat: yes
