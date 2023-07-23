@@ -1,6 +1,7 @@
 # vlc-real-estate-web-app
 
-Goal of this project is to visualize current key indicators about the valencian real estate market.
+Goal of this project is to visualize current key indicators about the valencian real estate market. [Github Link](https://github.com/LeopoldWalther/valencia-real-estate-web-app)
+
 
 
 ### Table of Contents
@@ -167,3 +168,13 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+Today I completed my Udacity Nanodegree as a Cloud DevOps Engineer. What amazes me about the Cloud, is that you can spin up and down any type of hardware (even quantum computing) and use it in a matter of minutes, where traditionally you would have to buy a lot of hardware. In the cloud just pay as you go.
+
+In the world of Data Science and Machine Learning there is a lot of emphasis on developing machine learning models in jupyter notebooks, but a lot less on taking a model and deploying it to production. Therefore I wanted to do this Nanodegree to learn all I need to leverage the power of Cloud Services to deploy websites to production an assure high availability and reliability anytime with great scalability and flexibility. 
+
+Among the projects I operationalized a machine learning microservices using kubernetes, which is an open-source system for automating the management of containerized applications. Furthermore I developed my own website to display current key performance indicators of the Valencian housing market. The real estate data is retrieved weekly from a spanish real estate online market place and then automatically wrangled and visualised to be displayed via a Flask App to Users. Using Infrastructure as Code a continuous integration pipeline deploys all the necessary infrastructure in AWS to run this Flask-App in more than one data centre to allow it to be resilient, even if one data centre would experience a disaster. (Find more details here: https://github.com/LeopoldWalther/valencia-real-estate-web-app)
+
+
+
