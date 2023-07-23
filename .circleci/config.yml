@@ -338,7 +338,7 @@ jobs:
           name: Update docker image
           command: |
             export ANSIBLE_HOST_KEY_CHECKING=False
-            ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml  
+            ansible-playbook -i ./ansible/inventory.txt ./ansible/update-app.yml  
         
 workflows:
   default: 
