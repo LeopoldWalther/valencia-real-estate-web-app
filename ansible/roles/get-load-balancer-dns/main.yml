@@ -6,12 +6,23 @@
 
 - name: Get nodes
   shell: |
-    kubectl get svc vlc-real-estate-app-service > /home/ubuntu/elb-dns.txt
-  args:
-    creates: /home/ubuntu/elb-dns.txt
+    kubectl get svc vlc-real-estate-app-service
+  register: elb-dns
+
+- name: Get nodes
+  shell: |
+    sudo kubectl get svc vlc-real-estate-app-service > /home/ubuntu/elb-dns.txt
 
 - name: Copy the file to the local machine
   fetch:
     src: /home/ubuntu/elb-dns.txt
     dest: /root/project/ansible/elb-dns.txt
     flat: yes
+
+- name: Fetch the output to the local machine 2
+  fetch:
+    src: /home/ubuntu/elb-dns.txt  # Replace this with the actual path of the output file on the remote host
+    dest: /root/project/ansible/  # Replace this with the local directory where you want to store the fetched file
+    flat: yes
+  delegate_to: localhost
+  run_once: yes
