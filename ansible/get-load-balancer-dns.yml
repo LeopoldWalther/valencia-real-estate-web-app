@@ -43,24 +43,17 @@
       register: kubectl_output
       ignore_errors: true  # To avoid failure due to sudo command in kubectl
 
-    - name: Debug file_result
-      debug:
-        var: file_result
-
     - name: Create the file with kubectl output
       copy:
         content: "{{ kubectl_output.stdout }}"
         dest: /home/ubuntu/elb-dns.txt
       when: kubectl_output is success
 
-    - name: Fetch the output to the local machine
-      fetch:
-        src: /home/ubuntu/elb-dns.txt
-        dest: /root/project/ansible/
-        flat: yes
+    - name: Copy the output to a local file
+      copy:
+        content: "{{ kubectl_output.stdout }}"
+        dest: "~/elb_dns.txt"
       delegate_to: localhost
-      run_once: yes
-
     
 
 
