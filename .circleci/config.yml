@@ -264,11 +264,6 @@ jobs:
             echo "Elastic Load Balancer DNS:"
             cat ~/elb_dns.txt
 
-      - persist_to_workspace:
-          root: .
-          paths:
-            - ~/elb-dns.txt
-
   deploy-app:
     executor: python-alpine
     steps:
