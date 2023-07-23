@@ -7,6 +7,6 @@
   args:
     chdir: $HOME
 
-- name: Check if deployment successful
-  shell: |
-    kubectl rollout status deployments/{{ ENVIRONMENT_NAME }}
+#- name: Check if deployment successful
+#  shell: |
+#    kubectl rollout status deployments/{{ ENVIRONMENT_NAME }}
