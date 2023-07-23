@@ -339,6 +339,7 @@ jobs:
           command: |
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ./ansible/inventory.txt ./ansible/update-app.yml  
+          no_output_timeout: 30m
         
 workflows:
   default: 
