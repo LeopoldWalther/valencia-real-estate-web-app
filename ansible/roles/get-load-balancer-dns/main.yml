@@ -11,13 +11,20 @@
   register: file_result
 
 - name: Get nodes
-  shell: |
-    sudo kubectl get svc vlc-real-estate-app-service > /home/ubuntu/elb-dns.txt
+  command: "kubectl get svc vlc-real-estate-app-service"
+  register: kubectl_output
+  ignore_errors: true  # To avoid failure due to sudo command in kubectl
 
-- name: Fetch the output to the local machine 2
+- name: Create the file with kubectl output
+  copy:
+    content: "{{ kubectl_output.stdout }}"
+    dest: /home/ubuntu/elb-dns.txt
+  when: kubectl_output is success
+
+- name: Fetch the output to the local machine
   fetch:
-    src: /home/ubuntu/elb-dns.txt  # Replace this with the actual path of the output file on the remote host
-    dest: /root/project/ansible/  # Replace this with the local directory where you want to store the fetched file
+    src: /home/ubuntu/elb-dns.txt
+    dest: /root/project/ansible/
     flat: yes
   delegate_to: localhost
   run_once: yes
