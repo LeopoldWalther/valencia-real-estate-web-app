@@ -29,6 +29,3 @@
   delegate_to: localhost
   run_once: yes
 
-- name: Debug file_result
-  debug:
-    var: file_result

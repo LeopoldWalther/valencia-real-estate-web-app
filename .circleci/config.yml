@@ -261,16 +261,13 @@ jobs:
 
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ./ansible/inventory.txt ./ansible/get-load-balancer-dns.yml
-            pwd
-            ls
             echo "Elastic Load Balancer DNS:"
-            ls ./ansible
             cat ~/elb_dns.txt
 
       - persist_to_workspace:
           root: .
           paths:
-            - ./ansible/elb-dns.txt
+            - ~/elb-dns.txt
 
   deploy-app:
     executor: python-alpine
