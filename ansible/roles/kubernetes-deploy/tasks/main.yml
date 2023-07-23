@@ -10,7 +10,7 @@
 
 - name: Copy kubernetes deployment
   copy:
-    src: "kubernetes-deployment.yaml"
+    src: kubernetes-deployment.yaml
     dest: $HOME
 
 - name: Apply kubernetes deployment

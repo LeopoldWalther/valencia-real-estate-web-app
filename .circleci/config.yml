@@ -360,3 +360,4 @@ workflows:
           requires: [build-image, deploy-load-balancer]
       - update-app-image:
           requires: [deploy-app]
+
