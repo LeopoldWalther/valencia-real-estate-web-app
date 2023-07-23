@@ -27,8 +27,39 @@
         aws configure set aws_secret_access_key {{ AWS_SECRET_ACCESS_KEY }}
 
 
-  roles:
-    - get-load-balancer-dns
+  tasks:
+    - name: Create kubeconfig for cluster
+      shell: |
+        aws eks update-kubeconfig --region {{ AWS_DEFAULT_REGION }} --name {{ ENVIRONMENT_NAME }}-Cluster
+
+    - name: Create the file
+      file:
+        path: /home/ubuntu/elb-dns.txt
+        state: touch
+      register: file_result
+
+    - name: Get nodes
+      command: "kubectl get svc vlc-real-estate-app-service"
+      register: kubectl_output
+      ignore_errors: true  # To avoid failure due to sudo command in kubectl
+
+    - name: Create the file with kubectl output
+      copy:
+        content: "{{ kubectl_output.stdout }}"
+        dest: /home/ubuntu/elb-dns.txt
+      when: kubectl_output is success
+
+    - name: Fetch the output to the local machine
+      fetch:
+        src: /home/ubuntu/elb-dns.txt
+        dest: /root/project/ansible/
+        flat: yes
+      delegate_to: localhost
+      run_once: yes
+
+    - name: Debug file_result
+      debug:
+        var: file_result
 
 
 
