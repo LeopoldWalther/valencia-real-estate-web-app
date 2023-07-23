@@ -211,15 +211,12 @@ jobs:
             cat ./ansible/inventory.txt
 
             if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
-
               then
                 echo "Jump Host will be configured."
                 export ANSIBLE_HOST_KEY_CHECKING=False
-                ansible-playbook -i ./ansible/inventory.txt ./ansible/configure-server.yml   
-                
+                ansible-playbook -i ./ansible/inventory.txt ./ansible/configure-server.yml     
               else
                 echo "Jump Host already configured."
-              
               fi
 
       - destroy-environment
@@ -249,16 +246,13 @@ jobs:
           name: Configure server
           command: |
             if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
-
               then
                 echo "Elastic Load Balancer Service by Kubernetes will be initialized"
                 export ANSIBLE_HOST_KEY_CHECKING=False
                 ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-load-balancer.yml   
                 sleep 60
-                
               else
-                echo "Elastic Load Balancer Service already active."
-              
+                echo "Elastic Load Balancer Service already active." 
               fi
 
       - run:
@@ -267,7 +261,7 @@ jobs:
 
             export ANSIBLE_HOST_KEY_CHECKING=False
             ansible-playbook -i ./ansible/inventory.txt ./ansible/get-load-balancer-dns.yml
-            cat ./ansible/dns.txt
+            cat ./ansible/elb-dns.txt
 
       - persist_to_workspace:
           root: .
@@ -299,15 +293,12 @@ jobs:
           name: Deploy app image to cluster
           command: |
             if grep -q "Successfully created/updated stack" ./ansible/server-status.txt
-
               then
                 echo "App will be deployed to Cluster."
                 export ANSIBLE_HOST_KEY_CHECKING=False
                 ansible-playbook -i ./ansible/inventory.txt ./ansible/deploy-app.yml  
-                
               else
                 echo "App already deployed." 
-              
               fi
           
       - destroy-environment

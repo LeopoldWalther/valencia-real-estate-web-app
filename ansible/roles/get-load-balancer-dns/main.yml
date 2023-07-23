@@ -6,13 +6,12 @@
 
 - name: Get nodes
   shell: |
-    kubectl get svc {{ ENVIRONMENT_NAME }}-service
-  register: dns
-      args:
-        chdir: $HOME
+    kubectl get svc vlc-real-estate-app-service > /home/ubuntu/elb-dns.txt
+  args:
+    creates: /home/ubuntu/elb-dns.txt
 
-- name: Copy dns
-  copy:
-    content: "{{ dns.stdout }}"
-    dest: "~/dns.txt"
-  delegate_to: localhost
+- name: Copy the file to the local machine
+  fetch:
+    src: /home/ubuntu/elb-dns.txt
+    dest: ./ansible/elb-dns.txt
+    flat: yes

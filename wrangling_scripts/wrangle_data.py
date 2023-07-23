@@ -52,10 +52,11 @@ def return_figures():
           )
       )
 
-    layout_one = dict(title = 'Change in mean price per area.',
+    layout_one = dict(title = 'Mean Price Per Area in Valencian Neighborhoods',
                 xaxis = dict(title = 'Date'),
                 yaxis = dict(title = 'Mean Price Per Area'),
                 )
+    
 
 
 
