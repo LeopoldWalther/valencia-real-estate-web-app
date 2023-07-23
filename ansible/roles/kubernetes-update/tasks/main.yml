@@ -2,11 +2,12 @@
 
 - name: Update kubernetes deployment to latest docker image
   shell: |
-    kubectl set image deployment/vlc-real-estate-app vlc-real-estate-app-container=leopoldwalther/valencia-real-estate-report:latest
+    kubectl set image deployment/{{ ENVIRONMENT_NAME }} {{ ENVIRONMENT_NAME }}-container={{ DOCKER_PATH }}:{{ CIRCLE_WORKFLOW_ID }}
 
-#- name: Check if deployment successful
-#  shell: |
-#    kubectl rollout status deployments/{{ ENVIRONMENT_NAME }}
+- name: Wait for 60 seconds
+  pause:
+    seconds: 60
 
-
-# kubectl set image deployment/{{ ENVIRONMENT_NAME }} {{ ENVIRONMENT_NAME }}-container={{ DOCKER_PATH }}:latest
+- name: Check if deployment successful
+  shell: |
+    kubectl rollout status deployments/{{ ENVIRONMENT_NAME }}

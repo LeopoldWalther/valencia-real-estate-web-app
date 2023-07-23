@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: vlc-real-estate-app
 spec:
-  replicas: 2
+  replicas: 4
   selector:
     matchLabels:
       app: vlc-real-estate-app

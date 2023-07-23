@@ -103,10 +103,10 @@ jobs:
 
             # Authenticate & tag
             docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-            docker tag valencia-real-estate-report $DOCKER_PATH:latest
+            docker tag valencia-real-estate-report $DOCKER_PATH:$CIRCLE_WORKFLOW_ID
 
             # Push image to a docker repository
-            docker push $DOCKER_PATH:latest
+            docker push $DOCKER_PATH:$CIRCLE_WORKFLOW_ID
             
 
   deploy-network:
@@ -348,17 +348,17 @@ workflows:
       - test-app
       - build-image:
           requires: [test-app]
-      #- deploy-network
-      #- deploy-cluster:
-      #    requires: [deploy-network]
-      #- deploy-nodes:
-      #    requires: [deploy-cluster]
-      #- configure-jumphost:
-      #    requires: [deploy-nodes]
-      #- deploy-load-balancer:
-      #    requires: [configure-jumphost]
-      #- deploy-app:
-      #    requires: [build-image, deploy-load-balancer]
-      #- update-app-image:
-      #    requires: [deploy-app]
+      - deploy-network
+      - deploy-cluster:
+          requires: [deploy-network]
+      - deploy-nodes:
+          requires: [deploy-cluster]
+      - configure-jumphost:
+          requires: [deploy-nodes]
+      - deploy-load-balancer:
+          requires: [configure-jumphost]
+      - deploy-app:
+          requires: [build-image, deploy-load-balancer]
+      - update-app-image:
+          requires: [deploy-app]
 

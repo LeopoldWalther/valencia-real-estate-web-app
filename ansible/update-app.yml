@@ -12,6 +12,8 @@
     AWS_SECRET_ACCESS_KEY: "{{ lookup('env','AWS_SECRET_ACCESS_KEY') }}"
     ENVIRONMENT_NAME: "{{ lookup('env', 'ENVIRONMENT_NAME') }}"
     DOCKER_PATH: "{{ lookup('env', 'DOCKER_PATH') }}"
+    CIRCLE_WORKFLOW_ID: "{{ lookup('env', 'CIRCLE_WORKFLOW_ID') }}"
+
 
   pre_tasks:
 
