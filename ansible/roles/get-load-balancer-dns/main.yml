@@ -8,6 +8,7 @@
   file:
     path: /home/ubuntu/elb-dns.txt
     state: touch
+  register: file_result
 
 - name: Get nodes
   shell: |
@@ -20,3 +21,7 @@
     flat: yes
   delegate_to: localhost
   run_once: yes
+
+- name: Debug file_result
+  debug:
+    var: file_result
