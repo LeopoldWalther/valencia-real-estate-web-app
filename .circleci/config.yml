@@ -345,22 +345,18 @@ workflows:
 
     jobs:
       - test-app
-      #- build-image:
-      #    requires: [test-app]
-      - docker/publish:
-          image: $DOCKERPATH
-          update-description: true
-      #- deploy-network
-      #- deploy-cluster:
-      #    requires: [deploy-network]
-      #- deploy-nodes:
-      #    requires: [deploy-cluster]
-      #- configure-jumphost:
-      #    requires: [deploy-nodes]
-      #- deploy-load-balancer:
-      #    requires: [configure-jumphost]
-      #- deploy-app:
-      #    requires: [build-image, deploy-load-balancer]
-      #- update-app-image:
-      #    requires: [deploy-app]
-      #- clean-up 
+      - build-image:
+          requires: [test-app]
+      - deploy-network
+      - deploy-cluster:
+          requires: [deploy-network]
+      - deploy-nodes:
+          requires: [deploy-cluster]
+      - configure-jumphost:
+          requires: [deploy-nodes]
+      - deploy-load-balancer:
+          requires: [configure-jumphost]
+      - deploy-app:
+          requires: [build-image, deploy-load-balancer]
+      - update-app-image:
+          requires: [deploy-app]
