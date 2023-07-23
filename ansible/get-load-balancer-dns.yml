@@ -43,6 +43,10 @@
       register: kubectl_output
       ignore_errors: true  # To avoid failure due to sudo command in kubectl
 
+    - name: Debug file_result
+      debug:
+        var: file_result
+
     - name: Create the file with kubectl output
       copy:
         content: "{{ kubectl_output.stdout }}"
@@ -57,9 +61,7 @@
       delegate_to: localhost
       run_once: yes
 
-    - name: Debug file_result
-      debug:
-        var: file_result
+    
 
 
 
