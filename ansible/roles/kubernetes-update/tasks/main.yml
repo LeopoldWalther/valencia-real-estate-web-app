@@ -2,11 +2,11 @@
 
 - name: Update kubernetes deployment to latest docker image
   shell: |
-    kubectl set image deployment/{{ ENVIRONMENT_NAME }} {{ ENVIRONMENT_NAME }}-container={{ DOCKER_PATH }}:latest
-
-  args:
-    chdir: $HOME
+    kubectl set image deployment/vlc-real-estate-app vlc-real-estate-app-container=leopoldwalther/valencia-real-estate-report:latest
 
 #- name: Check if deployment successful
 #  shell: |
 #    kubectl rollout status deployments/{{ ENVIRONMENT_NAME }}
+
+
+# kubectl set image deployment/{{ ENVIRONMENT_NAME }} {{ ENVIRONMENT_NAME }}-container={{ DOCKER_PATH }}:latest

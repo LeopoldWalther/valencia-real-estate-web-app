@@ -18,16 +18,16 @@ Parameters:
       Description: Min amount of web servers
       Type: Number
       Default: 2
+    
+    DesiredSize:
+      Description: Desired amount of web servers
+      Type: Number
+      Default: 4
 
     MaxSize:
       Description: Max amount of web servers
       Type: Number
-      Default: 4
-
-    DesiredSize:
-      Description: Desired amount of web servers
-      Type: Number
-      Default: 2
+      Default: 6
 
 
 Resources:
